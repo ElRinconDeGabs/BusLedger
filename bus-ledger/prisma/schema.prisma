@@ -1,0 +1,29 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id       Int    @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  transactions Transaction[]
+}
+
+model Transaction {
+  id       Int    @id @default(autoincrement())
+  amount      Float
+  description String
+  type        String
+  createdAt   DateTime @default(now())
+
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+}
