@@ -1,5 +1,3 @@
-// Removed server-side logic (cookies) to avoid mixing with client-side logic
-
 export function saveUserSession(user: any) {
   if (typeof window !== "undefined") {
     localStorage.setItem("user", JSON.stringify(user));
@@ -33,7 +31,14 @@ export async function login(data: {
     throw new Error(error.error || "Error al iniciar sesión");
   }
 
-  return res.json();
+  const responseData = await res.json();
+  
+  // Guardar el userId en localStorage
+  if (responseData.userId) {
+    saveUserSession({ userId: responseData.userId, email: data.email });
+  }
+
+  return responseData;
 }
 
 export async function register(data: {

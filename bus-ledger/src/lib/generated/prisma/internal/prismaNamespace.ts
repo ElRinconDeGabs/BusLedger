@@ -385,6 +385,7 @@ type FieldRefInputType<Model, FieldType> = Model extends never ? never : FieldRe
 
 export const ModelName = {
   User: 'User',
+  Busito: 'Busito',
   Transaction: 'Transaction'
 } as const
 
@@ -401,7 +402,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "transaction"
+    modelProps: "user" | "busito" | "transaction"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -476,6 +477,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.UserCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.UserCountAggregateOutputType> | number
+        }
+      }
+    }
+    Busito: {
+      payload: Prisma.$BusitoPayload<ExtArgs>
+      fields: Prisma.BusitoFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.BusitoFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.BusitoFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>
+        }
+        findFirst: {
+          args: Prisma.BusitoFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.BusitoFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>
+        }
+        findMany: {
+          args: Prisma.BusitoFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>[]
+        }
+        create: {
+          args: Prisma.BusitoCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>
+        }
+        createMany: {
+          args: Prisma.BusitoCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.BusitoCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>[]
+        }
+        delete: {
+          args: Prisma.BusitoDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>
+        }
+        update: {
+          args: Prisma.BusitoUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>
+        }
+        deleteMany: {
+          args: Prisma.BusitoDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.BusitoUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.BusitoUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>[]
+        }
+        upsert: {
+          args: Prisma.BusitoUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$BusitoPayload>
+        }
+        aggregate: {
+          args: Prisma.BusitoAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateBusito>
+        }
+        groupBy: {
+          args: Prisma.BusitoGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BusitoGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.BusitoCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.BusitoCountAggregateOutputType> | number
         }
       }
     }
@@ -603,13 +678,30 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const BusitoScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  plateNumber: 'plateNumber',
+  capacity: 'capacity',
+  model: 'model',
+  year: 'year',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BusitoScalarFieldEnum = (typeof BusitoScalarFieldEnum)[keyof typeof BusitoScalarFieldEnum]
+
+
 export const TransactionScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   description: 'description',
   type: 'type',
   createdAt: 'createdAt',
-  userId: 'userId'
+  userId: 'userId',
+  busitoId: 'busitoId'
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
@@ -629,6 +721,14 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 
 
 
@@ -788,6 +888,7 @@ export type PrismaClientOptions = ({
 }
 export type GlobalOmitConfig = {
   user?: Prisma.UserOmit
+  busito?: Prisma.BusitoOmit
   transaction?: Prisma.TransactionOmit
 }
 

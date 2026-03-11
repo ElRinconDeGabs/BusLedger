@@ -3,7 +3,6 @@
 import { JSX, useState } from "react"
 import { useRouter } from "next/navigation"
 import { login } from "@/services/authService"
-import { saveUserSession } from "@/lib/auth"
 import { ui } from "@/lib/styles/ui"
 
 export default function LoginPage(): JSX.Element {
@@ -23,11 +22,12 @@ export default function LoginPage(): JSX.Element {
 
     try {
 
-      const user = await login(email, password)
+      const user = await login({ email, password })
 
-      saveUserSession(user)
+      // Save user session logic should be implemented in client-compatible way
+      localStorage.setItem("user", JSON.stringify(user))
 
-      router.push("/dashboard")
+      router.replace("/dashboard")
 
     } catch (err: any) {
 

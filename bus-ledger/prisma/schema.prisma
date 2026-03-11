@@ -8,22 +8,40 @@ datasource db {
 }
 
 model User {
-  id       Int    @id @default(autoincrement())
+  id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
-
+  busitos   Busito[]
   transactions Transaction[]
 }
 
+model Busito {
+  id           Int           @id @default(autoincrement())
+  name         String
+  description  String?
+  plateNumber  String?
+  capacity     Int?
+  model        String?
+  year         Int?
+  userId       Int
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  transactions Transaction[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @default(now()) @updatedAt
+}
+
 model Transaction {
-  id       Int    @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   amount      Float
   description String
   type        String
   createdAt   DateTime @default(now())
 
-  userId Int
-  user   User   @relation(fields: [userId], references: [id])
+  userId   Int
+  user     User   @relation(fields: [userId], references: [id])
+
+  busitoId Int
+  busito   Busito @relation(fields: [busitoId], references: [id])
 }

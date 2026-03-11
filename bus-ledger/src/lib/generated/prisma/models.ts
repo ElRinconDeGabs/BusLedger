@@ -9,5 +9,6 @@
  * 🟢 You can import this file directly.
  */
 export type * from './models/User'
+export type * from './models/Busito'
 export type * from './models/Transaction'
 export type * from './commonInputTypes'

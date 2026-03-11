@@ -52,6 +52,7 @@ export const AnyNull = runtime.AnyNull
 
 export const ModelName = {
   User: 'User',
+  Busito: 'Busito',
   Transaction: 'Transaction'
 } as const
 
@@ -82,13 +83,30 @@ export const UserScalarFieldEnum = {
 export type UserScalarFieldEnum = (typeof UserScalarFieldEnum)[keyof typeof UserScalarFieldEnum]
 
 
+export const BusitoScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  description: 'description',
+  plateNumber: 'plateNumber',
+  capacity: 'capacity',
+  model: 'model',
+  year: 'year',
+  userId: 'userId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type BusitoScalarFieldEnum = (typeof BusitoScalarFieldEnum)[keyof typeof BusitoScalarFieldEnum]
+
+
 export const TransactionScalarFieldEnum = {
   id: 'id',
   amount: 'amount',
   description: 'description',
   type: 'type',
   createdAt: 'createdAt',
-  userId: 'userId'
+  userId: 'userId',
+  busitoId: 'busitoId'
 } as const
 
 export type TransactionScalarFieldEnum = (typeof TransactionScalarFieldEnum)[keyof typeof TransactionScalarFieldEnum]
@@ -108,4 +126,12 @@ export const QueryMode = {
 } as const
 
 export type QueryMode = (typeof QueryMode)[keyof typeof QueryMode]
+
+
+export const NullsOrder = {
+  first: 'first',
+  last: 'last'
+} as const
+
+export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
 

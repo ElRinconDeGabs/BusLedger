@@ -30,12 +30,14 @@ export type TransactionAvgAggregateOutputType = {
   id: number | null
   amount: number | null
   userId: number | null
+  busitoId: number | null
 }
 
 export type TransactionSumAggregateOutputType = {
   id: number | null
   amount: number | null
   userId: number | null
+  busitoId: number | null
 }
 
 export type TransactionMinAggregateOutputType = {
@@ -45,6 +47,7 @@ export type TransactionMinAggregateOutputType = {
   type: string | null
   createdAt: Date | null
   userId: number | null
+  busitoId: number | null
 }
 
 export type TransactionMaxAggregateOutputType = {
@@ -54,6 +57,7 @@ export type TransactionMaxAggregateOutputType = {
   type: string | null
   createdAt: Date | null
   userId: number | null
+  busitoId: number | null
 }
 
 export type TransactionCountAggregateOutputType = {
@@ -63,6 +67,7 @@ export type TransactionCountAggregateOutputType = {
   type: number
   createdAt: number
   userId: number
+  busitoId: number
   _all: number
 }
 
@@ -71,12 +76,14 @@ export type TransactionAvgAggregateInputType = {
   id?: true
   amount?: true
   userId?: true
+  busitoId?: true
 }
 
 export type TransactionSumAggregateInputType = {
   id?: true
   amount?: true
   userId?: true
+  busitoId?: true
 }
 
 export type TransactionMinAggregateInputType = {
@@ -86,6 +93,7 @@ export type TransactionMinAggregateInputType = {
   type?: true
   createdAt?: true
   userId?: true
+  busitoId?: true
 }
 
 export type TransactionMaxAggregateInputType = {
@@ -95,6 +103,7 @@ export type TransactionMaxAggregateInputType = {
   type?: true
   createdAt?: true
   userId?: true
+  busitoId?: true
 }
 
 export type TransactionCountAggregateInputType = {
@@ -104,6 +113,7 @@ export type TransactionCountAggregateInputType = {
   type?: true
   createdAt?: true
   userId?: true
+  busitoId?: true
   _all?: true
 }
 
@@ -200,6 +210,7 @@ export type TransactionGroupByOutputType = {
   type: string
   createdAt: Date
   userId: number
+  busitoId: number
   _count: TransactionCountAggregateOutputType | null
   _avg: TransactionAvgAggregateOutputType | null
   _sum: TransactionSumAggregateOutputType | null
@@ -232,7 +243,9 @@ export type TransactionWhereInput = {
   type?: Prisma.StringFilter<"Transaction"> | string
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
   userId?: Prisma.IntFilter<"Transaction"> | number
+  busitoId?: Prisma.IntFilter<"Transaction"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  busito?: Prisma.XOR<Prisma.BusitoScalarRelationFilter, Prisma.BusitoWhereInput>
 }
 
 export type TransactionOrderByWithRelationInput = {
@@ -242,7 +255,9 @@ export type TransactionOrderByWithRelationInput = {
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  busito?: Prisma.BusitoOrderByWithRelationInput
 }
 
 export type TransactionWhereUniqueInput = Prisma.AtLeast<{
@@ -255,7 +270,9 @@ export type TransactionWhereUniqueInput = Prisma.AtLeast<{
   type?: Prisma.StringFilter<"Transaction"> | string
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
   userId?: Prisma.IntFilter<"Transaction"> | number
+  busitoId?: Prisma.IntFilter<"Transaction"> | number
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  busito?: Prisma.XOR<Prisma.BusitoScalarRelationFilter, Prisma.BusitoWhereInput>
 }, "id">
 
 export type TransactionOrderByWithAggregationInput = {
@@ -265,6 +282,7 @@ export type TransactionOrderByWithAggregationInput = {
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
   _count?: Prisma.TransactionCountOrderByAggregateInput
   _avg?: Prisma.TransactionAvgOrderByAggregateInput
   _max?: Prisma.TransactionMaxOrderByAggregateInput
@@ -282,6 +300,7 @@ export type TransactionScalarWhereWithAggregatesInput = {
   type?: Prisma.StringWithAggregatesFilter<"Transaction"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Transaction"> | Date | string
   userId?: Prisma.IntWithAggregatesFilter<"Transaction"> | number
+  busitoId?: Prisma.IntWithAggregatesFilter<"Transaction"> | number
 }
 
 export type TransactionCreateInput = {
@@ -290,6 +309,7 @@ export type TransactionCreateInput = {
   type: string
   createdAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutTransactionsInput
+  busito: Prisma.BusitoCreateNestedOneWithoutTransactionsInput
 }
 
 export type TransactionUncheckedCreateInput = {
@@ -299,6 +319,7 @@ export type TransactionUncheckedCreateInput = {
   type: string
   createdAt?: Date | string
   userId: number
+  busitoId: number
 }
 
 export type TransactionUpdateInput = {
@@ -307,6 +328,7 @@ export type TransactionUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutTransactionsNestedInput
+  busito?: Prisma.BusitoUpdateOneRequiredWithoutTransactionsNestedInput
 }
 
 export type TransactionUncheckedUpdateInput = {
@@ -316,6 +338,7 @@ export type TransactionUncheckedUpdateInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  busitoId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TransactionCreateManyInput = {
@@ -325,6 +348,7 @@ export type TransactionCreateManyInput = {
   type: string
   createdAt?: Date | string
   userId: number
+  busitoId: number
 }
 
 export type TransactionUpdateManyMutationInput = {
@@ -341,6 +365,7 @@ export type TransactionUncheckedUpdateManyInput = {
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  busitoId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TransactionListRelationFilter = {
@@ -360,12 +385,14 @@ export type TransactionCountOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
 }
 
 export type TransactionAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
 }
 
 export type TransactionMaxOrderByAggregateInput = {
@@ -375,6 +402,7 @@ export type TransactionMaxOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
 }
 
 export type TransactionMinOrderByAggregateInput = {
@@ -384,12 +412,14 @@ export type TransactionMinOrderByAggregateInput = {
   type?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
 }
 
 export type TransactionSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
   amount?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  busitoId?: Prisma.SortOrder
 }
 
 export type TransactionCreateNestedManyWithoutUserInput = {
@@ -434,6 +464,48 @@ export type TransactionUncheckedUpdateManyWithoutUserNestedInput = {
   deleteMany?: Prisma.TransactionScalarWhereInput | Prisma.TransactionScalarWhereInput[]
 }
 
+export type TransactionCreateNestedManyWithoutBusitoInput = {
+  create?: Prisma.XOR<Prisma.TransactionCreateWithoutBusitoInput, Prisma.TransactionUncheckedCreateWithoutBusitoInput> | Prisma.TransactionCreateWithoutBusitoInput[] | Prisma.TransactionUncheckedCreateWithoutBusitoInput[]
+  connectOrCreate?: Prisma.TransactionCreateOrConnectWithoutBusitoInput | Prisma.TransactionCreateOrConnectWithoutBusitoInput[]
+  createMany?: Prisma.TransactionCreateManyBusitoInputEnvelope
+  connect?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+}
+
+export type TransactionUncheckedCreateNestedManyWithoutBusitoInput = {
+  create?: Prisma.XOR<Prisma.TransactionCreateWithoutBusitoInput, Prisma.TransactionUncheckedCreateWithoutBusitoInput> | Prisma.TransactionCreateWithoutBusitoInput[] | Prisma.TransactionUncheckedCreateWithoutBusitoInput[]
+  connectOrCreate?: Prisma.TransactionCreateOrConnectWithoutBusitoInput | Prisma.TransactionCreateOrConnectWithoutBusitoInput[]
+  createMany?: Prisma.TransactionCreateManyBusitoInputEnvelope
+  connect?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+}
+
+export type TransactionUpdateManyWithoutBusitoNestedInput = {
+  create?: Prisma.XOR<Prisma.TransactionCreateWithoutBusitoInput, Prisma.TransactionUncheckedCreateWithoutBusitoInput> | Prisma.TransactionCreateWithoutBusitoInput[] | Prisma.TransactionUncheckedCreateWithoutBusitoInput[]
+  connectOrCreate?: Prisma.TransactionCreateOrConnectWithoutBusitoInput | Prisma.TransactionCreateOrConnectWithoutBusitoInput[]
+  upsert?: Prisma.TransactionUpsertWithWhereUniqueWithoutBusitoInput | Prisma.TransactionUpsertWithWhereUniqueWithoutBusitoInput[]
+  createMany?: Prisma.TransactionCreateManyBusitoInputEnvelope
+  set?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  disconnect?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  delete?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  connect?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  update?: Prisma.TransactionUpdateWithWhereUniqueWithoutBusitoInput | Prisma.TransactionUpdateWithWhereUniqueWithoutBusitoInput[]
+  updateMany?: Prisma.TransactionUpdateManyWithWhereWithoutBusitoInput | Prisma.TransactionUpdateManyWithWhereWithoutBusitoInput[]
+  deleteMany?: Prisma.TransactionScalarWhereInput | Prisma.TransactionScalarWhereInput[]
+}
+
+export type TransactionUncheckedUpdateManyWithoutBusitoNestedInput = {
+  create?: Prisma.XOR<Prisma.TransactionCreateWithoutBusitoInput, Prisma.TransactionUncheckedCreateWithoutBusitoInput> | Prisma.TransactionCreateWithoutBusitoInput[] | Prisma.TransactionUncheckedCreateWithoutBusitoInput[]
+  connectOrCreate?: Prisma.TransactionCreateOrConnectWithoutBusitoInput | Prisma.TransactionCreateOrConnectWithoutBusitoInput[]
+  upsert?: Prisma.TransactionUpsertWithWhereUniqueWithoutBusitoInput | Prisma.TransactionUpsertWithWhereUniqueWithoutBusitoInput[]
+  createMany?: Prisma.TransactionCreateManyBusitoInputEnvelope
+  set?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  disconnect?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  delete?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  connect?: Prisma.TransactionWhereUniqueInput | Prisma.TransactionWhereUniqueInput[]
+  update?: Prisma.TransactionUpdateWithWhereUniqueWithoutBusitoInput | Prisma.TransactionUpdateWithWhereUniqueWithoutBusitoInput[]
+  updateMany?: Prisma.TransactionUpdateManyWithWhereWithoutBusitoInput | Prisma.TransactionUpdateManyWithWhereWithoutBusitoInput[]
+  deleteMany?: Prisma.TransactionScalarWhereInput | Prisma.TransactionScalarWhereInput[]
+}
+
 export type FloatFieldUpdateOperationsInput = {
   set?: number
   increment?: number
@@ -447,6 +519,7 @@ export type TransactionCreateWithoutUserInput = {
   description: string
   type: string
   createdAt?: Date | string
+  busito: Prisma.BusitoCreateNestedOneWithoutTransactionsInput
 }
 
 export type TransactionUncheckedCreateWithoutUserInput = {
@@ -455,6 +528,7 @@ export type TransactionUncheckedCreateWithoutUserInput = {
   description: string
   type: string
   createdAt?: Date | string
+  busitoId: number
 }
 
 export type TransactionCreateOrConnectWithoutUserInput = {
@@ -493,6 +567,50 @@ export type TransactionScalarWhereInput = {
   type?: Prisma.StringFilter<"Transaction"> | string
   createdAt?: Prisma.DateTimeFilter<"Transaction"> | Date | string
   userId?: Prisma.IntFilter<"Transaction"> | number
+  busitoId?: Prisma.IntFilter<"Transaction"> | number
+}
+
+export type TransactionCreateWithoutBusitoInput = {
+  amount: number
+  description: string
+  type: string
+  createdAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutTransactionsInput
+}
+
+export type TransactionUncheckedCreateWithoutBusitoInput = {
+  id?: number
+  amount: number
+  description: string
+  type: string
+  createdAt?: Date | string
+  userId: number
+}
+
+export type TransactionCreateOrConnectWithoutBusitoInput = {
+  where: Prisma.TransactionWhereUniqueInput
+  create: Prisma.XOR<Prisma.TransactionCreateWithoutBusitoInput, Prisma.TransactionUncheckedCreateWithoutBusitoInput>
+}
+
+export type TransactionCreateManyBusitoInputEnvelope = {
+  data: Prisma.TransactionCreateManyBusitoInput | Prisma.TransactionCreateManyBusitoInput[]
+  skipDuplicates?: boolean
+}
+
+export type TransactionUpsertWithWhereUniqueWithoutBusitoInput = {
+  where: Prisma.TransactionWhereUniqueInput
+  update: Prisma.XOR<Prisma.TransactionUpdateWithoutBusitoInput, Prisma.TransactionUncheckedUpdateWithoutBusitoInput>
+  create: Prisma.XOR<Prisma.TransactionCreateWithoutBusitoInput, Prisma.TransactionUncheckedCreateWithoutBusitoInput>
+}
+
+export type TransactionUpdateWithWhereUniqueWithoutBusitoInput = {
+  where: Prisma.TransactionWhereUniqueInput
+  data: Prisma.XOR<Prisma.TransactionUpdateWithoutBusitoInput, Prisma.TransactionUncheckedUpdateWithoutBusitoInput>
+}
+
+export type TransactionUpdateManyWithWhereWithoutBusitoInput = {
+  where: Prisma.TransactionScalarWhereInput
+  data: Prisma.XOR<Prisma.TransactionUpdateManyMutationInput, Prisma.TransactionUncheckedUpdateManyWithoutBusitoInput>
 }
 
 export type TransactionCreateManyUserInput = {
@@ -501,6 +619,7 @@ export type TransactionCreateManyUserInput = {
   description: string
   type: string
   createdAt?: Date | string
+  busitoId: number
 }
 
 export type TransactionUpdateWithoutUserInput = {
@@ -508,6 +627,7 @@ export type TransactionUpdateWithoutUserInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  busito?: Prisma.BusitoUpdateOneRequiredWithoutTransactionsNestedInput
 }
 
 export type TransactionUncheckedUpdateWithoutUserInput = {
@@ -516,6 +636,7 @@ export type TransactionUncheckedUpdateWithoutUserInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  busitoId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 export type TransactionUncheckedUpdateManyWithoutUserInput = {
@@ -524,6 +645,42 @@ export type TransactionUncheckedUpdateManyWithoutUserInput = {
   description?: Prisma.StringFieldUpdateOperationsInput | string
   type?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  busitoId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TransactionCreateManyBusitoInput = {
+  id?: number
+  amount: number
+  description: string
+  type: string
+  createdAt?: Date | string
+  userId: number
+}
+
+export type TransactionUpdateWithoutBusitoInput = {
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutTransactionsNestedInput
+}
+
+export type TransactionUncheckedUpdateWithoutBusitoInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+}
+
+export type TransactionUncheckedUpdateManyWithoutBusitoInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  amount?: Prisma.FloatFieldUpdateOperationsInput | number
+  description?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.StringFieldUpdateOperationsInput | string
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
 }
 
 
@@ -535,7 +692,9 @@ export type TransactionSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   type?: boolean
   createdAt?: boolean
   userId?: boolean
+  busitoId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  busito?: boolean | Prisma.BusitoDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transaction"]>
 
 export type TransactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -545,7 +704,9 @@ export type TransactionSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   type?: boolean
   createdAt?: boolean
   userId?: boolean
+  busitoId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  busito?: boolean | Prisma.BusitoDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transaction"]>
 
 export type TransactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -555,7 +716,9 @@ export type TransactionSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   type?: boolean
   createdAt?: boolean
   userId?: boolean
+  busitoId?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  busito?: boolean | Prisma.BusitoDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["transaction"]>
 
 export type TransactionSelectScalar = {
@@ -565,23 +728,28 @@ export type TransactionSelectScalar = {
   type?: boolean
   createdAt?: boolean
   userId?: boolean
+  busitoId?: boolean
 }
 
-export type TransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "description" | "type" | "createdAt" | "userId", ExtArgs["result"]["transaction"]>
+export type TransactionOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "amount" | "description" | "type" | "createdAt" | "userId" | "busitoId", ExtArgs["result"]["transaction"]>
 export type TransactionInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  busito?: boolean | Prisma.BusitoDefaultArgs<ExtArgs>
 }
 export type TransactionIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  busito?: boolean | Prisma.BusitoDefaultArgs<ExtArgs>
 }
 export type TransactionIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  busito?: boolean | Prisma.BusitoDefaultArgs<ExtArgs>
 }
 
 export type $TransactionPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Transaction"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    busito: Prisma.$BusitoPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -590,6 +758,7 @@ export type $TransactionPayload<ExtArgs extends runtime.Types.Extensions.Interna
     type: string
     createdAt: Date
     userId: number
+    busitoId: number
   }, ExtArgs["result"]["transaction"]>
   composites: {}
 }
@@ -985,6 +1154,7 @@ readonly fields: TransactionFieldRefs;
 export interface Prisma__TransactionClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  busito<T extends Prisma.BusitoDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.BusitoDefaultArgs<ExtArgs>>): Prisma.Prisma__BusitoClient<runtime.Types.Result.GetResult<Prisma.$BusitoPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1020,6 +1190,7 @@ export interface TransactionFieldRefs {
   readonly type: Prisma.FieldRef<"Transaction", 'String'>
   readonly createdAt: Prisma.FieldRef<"Transaction", 'DateTime'>
   readonly userId: Prisma.FieldRef<"Transaction", 'Int'>
+  readonly busitoId: Prisma.FieldRef<"Transaction", 'Int'>
 }
     
 
