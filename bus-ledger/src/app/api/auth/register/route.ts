@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma"
 import { NextResponse } from "next/server"
 import bcrypt from "bcryptjs"
 
+const PASSWORD_POLICY = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/
+
 export async function POST(req: Request) {
 
   try {
@@ -11,6 +13,13 @@ export async function POST(req: Request) {
     if ( !name || !email || !password) {
       return NextResponse.json(
         { error: "Missing fields" },
+        { status: 400 }
+      )
+    }
+
+    if (!PASSWORD_POLICY.test(password)) {
+      return NextResponse.json(
+        { error: "La contraseña debe tener 8 a 20 caracteres, incluir letras y numeros, sin caracteres especiales" },
         { status: 400 }
       )
     }
@@ -33,10 +42,18 @@ export async function POST(req: Request) {
         name: name,
         email: email,
         password: hashedPassword
-      }
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+      },
     })
 
-    return NextResponse.json(user)
+    return NextResponse.json({
+      message: "Registro exitoso",
+      user,
+    })
 
   } catch (error) {
 

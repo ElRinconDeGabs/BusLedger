@@ -63,8 +63,8 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 text-gray-800">
-      <div className="mx-auto flex min-h-screen w-full max-w-[1600px] items-stretch">
+    <div className="min-h-[100svh] overflow-x-hidden bg-gray-100 text-gray-800">
+      <div className="flex min-h-[100svh] w-full items-stretch">
         <Sidebar
           open={menuOpen}
           collapsed={sidebarCollapsed}
@@ -80,7 +80,7 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
             onMenuClick={toggleSidebar}
             onLogout={logout}
           />
-          <main className="space-y-6 p-4 sm:p-6">{children}</main>
+          <main className="w-full min-w-0 space-y-6 p-3 sm:p-6">{children}</main>
         </div>
       </div>
     </div>

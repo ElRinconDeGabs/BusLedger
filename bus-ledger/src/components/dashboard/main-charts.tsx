@@ -93,13 +93,13 @@ export default function MainCharts() {
         </article>
       </div>
 
-      <div className="relative h-80 rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-inner">
+      <div className="relative h-80 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-inner">
         {hasMonthlyData ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData} barGap={12}>
               <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#dfe6ee" />
               <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
+              <YAxis width={52} tick={{ fontSize: 12, fill: "#64748b" }} axisLine={false} tickLine={false} />
               <Tooltip
                 formatter={(value) => fmt(Number(value))}
                 contentStyle={{

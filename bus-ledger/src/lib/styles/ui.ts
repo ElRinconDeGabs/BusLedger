@@ -55,6 +55,14 @@ export const ui: Record<string, CSSProperties> = {
     color: "#000000"
   },
 
+  helperText: {
+    marginTop: "-6px",
+    marginBottom: "2px",
+    fontSize: "12px",
+    color: "#5f6b7a",
+    lineHeight: 1.3
+  },
+
   button: {
     padding: "12px",
     borderRadius: "8px",
