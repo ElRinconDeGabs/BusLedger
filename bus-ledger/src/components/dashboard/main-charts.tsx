@@ -21,7 +21,12 @@ type Summary = {
 
 export default function MainCharts() {
   const [data, setData] = useState<Summary | null>(null);
+  const [mounted, setMounted] = useState(false);
   const settings = useDisplaySettings();
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     fetch("/api/dashboard/summary")
@@ -94,7 +99,7 @@ export default function MainCharts() {
       </div>
 
       <div className="relative h-80 min-w-0 overflow-hidden rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-inner">
-        {hasMonthlyData ? (
+        {mounted && hasMonthlyData ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={monthlyData} barGap={12}>
               <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#dfe6ee" />
@@ -116,7 +121,7 @@ export default function MainCharts() {
         ) : (
           <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-slate-300 bg-slate-50 text-center">
             <p className="max-w-xs text-sm text-slate-500">
-              Aun no hay movimientos mensuales para mostrar en el grafico.
+              {!mounted ? "Preparando grafico..." : "Aun no hay movimientos mensuales para mostrar en el grafico."}
             </p>
           </div>
         )}

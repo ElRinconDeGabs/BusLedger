@@ -61,6 +61,10 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
       data: {
         name: body.name,
         description: body.description ?? null,
+        plateNumber: body.plateNumber?.trim() ? body.plateNumber.trim() : null,
+        capacity: body.capacity ? parseInt(String(body.capacity), 10) : null,
+        model: body.model?.trim() ? body.model.trim() : null,
+        year: body.year ? parseInt(String(body.year), 10) : null,
       },
     });
 

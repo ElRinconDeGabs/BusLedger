@@ -19,6 +19,10 @@ type BusitoDetail = {
   id: number;
   name: string;
   description?: string;
+  plateNumber?: string;
+  capacity?: number;
+  model?: string;
+  year?: number;
   createdAt: string;
   transactions: Transaction[];
 };
@@ -30,6 +34,10 @@ export default function BusitoDetailPage() {
   const [busito, setBusito] = useState<BusitoDetail | null>(null);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
+  const [plateNumber, setPlateNumber] = useState("");
+  const [capacity, setCapacity] = useState("");
+  const [model, setModel] = useState("");
+  const [year, setYear] = useState("");
 
   useEffect(() => {
     void fetchBusito();
@@ -46,13 +54,24 @@ export default function BusitoDetailPage() {
     setBusito(data);
     setName(data.name);
     setDescription(data.description ?? "");
+    setPlateNumber(data.plateNumber ?? "");
+    setCapacity(data.capacity ? String(data.capacity) : "");
+    setModel(data.model ?? "");
+    setYear(data.year ? String(data.year) : "");
   };
 
   const saveBusito = async () => {
     const res = await fetch(`/api/busitos/${params.id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ name, description }),
+      body: JSON.stringify({
+        name: name.trim(),
+        description: description.trim(),
+        plateNumber: plateNumber.trim(),
+        capacity: capacity ? Number(capacity) : null,
+        model: model.trim(),
+        year: year ? Number(year) : null,
+      }),
     });
 
     if (res.ok) await fetchBusito();
@@ -84,7 +103,7 @@ export default function BusitoDetailPage() {
 
   return (
     <DashboardShell title={busito.name} currentPath="/busitos">
-      <div className="space-y-6">
+      <div className="space-y-5">
         <div>
           <Link
             href="/busitos"
@@ -94,11 +113,11 @@ export default function BusitoDetailPage() {
           </Link>
         </div>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
               <h1 className="text-2xl font-semibold text-slate-900">{busito.name}</h1>
-              <p className="mt-1 text-sm text-slate-500">Vista segmentada de las transacciones exclusivas de este busito.</p>
+              <p className="mt-1 text-sm text-slate-500">Transacciones asociadas a esta unidad.</p>
             </div>
             <div className="rounded-xl bg-slate-50 px-4 py-3 text-sm text-slate-500 md:text-right">
               {busito.transactions.length} movimiento{busito.transactions.length === 1 ? "" : "s"} registrado{busito.transactions.length === 1 ? "" : "s"}
@@ -106,30 +125,30 @@ export default function BusitoDetailPage() {
           </div>
 
           <div className="mt-4 grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl bg-emerald-50 p-3">
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50 p-3">
               <p className="text-xs text-emerald-700">Ingresos</p>
               <p className="text-xl font-semibold text-emerald-800">{fmt(totals.ingresos)}</p>
             </div>
-            <div className="rounded-xl bg-rose-50 p-3">
+            <div className="rounded-xl border border-rose-200 bg-rose-50 p-3">
               <p className="text-xs text-rose-700">Gastos</p>
               <p className="text-xl font-semibold text-rose-800">{fmt(totals.gastos)}</p>
             </div>
-            <div className="rounded-xl bg-cyan-50 p-3">
+            <div className="rounded-xl border border-cyan-200 bg-cyan-50 p-3">
               <p className="text-xs text-cyan-700">Balance</p>
               <p className="text-xl font-semibold text-cyan-800">{fmt(totals.balance)}</p>
             </div>
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
           <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h2 className="text-lg font-semibold text-slate-900">Transacciones del busito</h2>
-              <p className="text-sm text-slate-500">Aqui solo se muestran ingresos y gastos asociados a esta unidad.</p>
+              <p className="text-sm text-slate-500">Movimientos de ingresos y gastos de esta unidad.</p>
             </div>
             <Link
               href="/transacciones"
-              className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+              className="rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
             >
               Ir a transacciones
             </Link>
@@ -165,23 +184,97 @@ export default function BusitoDetailPage() {
           </div>
         </section>
 
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Editar datos del busito</h2>
-          <p className="mt-1 text-sm text-slate-500">Configuracion basica de esta unidad.</p>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <input
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              className="rounded-xl border border-slate-200 px-3 py-2.5 outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
-            />
-            <input
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="rounded-xl border border-slate-200 px-3 py-2.5 outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
-              placeholder="Descripcion"
-            />
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:p-5">
+          <div className="mb-3">
+            <h2 className="text-lg font-semibold text-slate-900">Editar busito</h2>
+            <p className="mt-1 text-sm text-slate-500">Actualiza nombre y descripcion sin recargar la pagina.</p>
           </div>
-          <button onClick={saveBusito} className="mt-3 rounded-xl bg-blue-600 px-4 py-2 text-sm text-white hover:bg-blue-700">
+
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            <div>
+              <label htmlFor="detail-name" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                Nombre
+              </label>
+              <input
+                id="detail-name"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="detail-description" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                Descripcion
+              </label>
+              <input
+                id="detail-description"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+                placeholder="Opcional"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="detail-plate" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                Placa
+              </label>
+              <input
+                id="detail-plate"
+                value={plateNumber}
+                onChange={(e) => setPlateNumber(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+                placeholder="Opcional"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="detail-capacity" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                Capacidad
+              </label>
+              <input
+                id="detail-capacity"
+                type="number"
+                min={1}
+                value={capacity}
+                onChange={(e) => setCapacity(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+                placeholder="Opcional"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="detail-model" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                Modelo
+              </label>
+              <input
+                id="detail-model"
+                value={model}
+                onChange={(e) => setModel(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+                placeholder="Opcional"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="detail-year" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+                Ano
+              </label>
+              <input
+                id="detail-year"
+                type="number"
+                min={1980}
+                max={2100}
+                value={year}
+                onChange={(e) => setYear(e.target.value)}
+                className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+                placeholder="Opcional"
+              />
+            </div>
+          </div>
+
+          <button onClick={saveBusito} className="mt-3 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700">
             Guardar cambios
           </button>
         </section>
