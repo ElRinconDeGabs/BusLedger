@@ -126,7 +126,7 @@ export default function TransaccionesPage() {
             >
               <option value="">Selecciona un busito</option>
               {busitos.map((busito) => (
-                <option key={busito.id} value={busito.id -1}>
+                <option key={busito.id} value={busito.id}>
                   {busito.name}
                 </option>
               ))}
