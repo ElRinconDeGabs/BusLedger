@@ -26,6 +26,7 @@ export const config = {
     "/transacciones/:path*",
     "/reportes/:path*",
     "/configuracion/:path*",
+    "/admin/:path*",
     "/login",
     "/register",
   ],

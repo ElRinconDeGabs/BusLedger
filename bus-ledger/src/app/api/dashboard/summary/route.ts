@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUserIdFromToken } from "@/lib/server/getAuth";
+import { getUserContext } from "@/lib/server/getAuth";
 
 function isIngreso(type: string) {
   const t = type.toLowerCase();
@@ -8,12 +8,17 @@ function isIngreso(type: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const userId = getUserIdFromToken(req);
-  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const ctx = getUserContext(req);
+  if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
+    const where =
+      ctx.role === "ADMIN"
+        ? { busito: { organizationId: ctx.organizationId } }
+        : { userId: ctx.userId };
+
     const txs = await prisma.transaction.findMany({
-      where: { userId },
+      where,
       select: { amount: true, type: true, createdAt: true },
       orderBy: { createdAt: "asc" },
     });

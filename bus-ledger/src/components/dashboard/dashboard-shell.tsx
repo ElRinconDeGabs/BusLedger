@@ -4,6 +4,7 @@ import { ReactNode, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Sidebar from "@/components/dashboard/sidebar";
 import Topbar from "@/components/dashboard/topbar";
+import Toaster from "@/components/ui/toaster";
 
 const SIDEBAR_COLLAPSED_KEY = "busledger.sidebar-collapsed";
 
@@ -11,6 +12,9 @@ type User = {
   id: number;
   name: string;
   email: string;
+  role: "ADMIN" | "USER";
+  organizationId: number;
+  organizationName: string;
 };
 
 type DashboardShellProps = {
@@ -28,9 +32,7 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
   useEffect(() => {
     void fetchUser();
     const savedState = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-    if (savedState === "true") {
-      setSidebarCollapsed(true);
-    }
+    if (savedState === "true") setSidebarCollapsed(true);
   }, []);
 
   const fetchUser = async () => {
@@ -39,9 +41,7 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
       router.push("/login");
       return;
     }
-
-    const data = (await res.json()) as User;
-    setUser(data);
+    setUser((await res.json()) as User);
   };
 
   const logout = async () => {
@@ -58,7 +58,6 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
       });
       return;
     }
-
     setMenuOpen((old) => !old);
   };
 
@@ -70,8 +69,9 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
           collapsed={sidebarCollapsed}
           onClose={() => setMenuOpen(false)}
           currentPath={currentPath}
+          role={user?.role}
+          orgName={user?.organizationName}
         />
-
         <div className="flex min-w-0 flex-1 flex-col">
           <Topbar
             title={title}
@@ -83,6 +83,7 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
           <main className="w-full min-w-0 space-y-6 p-3 sm:p-6">{children}</main>
         </div>
       </div>
+      <Toaster />
     </div>
   );
 }

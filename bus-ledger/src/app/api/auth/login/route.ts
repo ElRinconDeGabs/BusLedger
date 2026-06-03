@@ -14,7 +14,6 @@ export async function POST(req: NextRequest) {
     const user = await prisma.user.findUnique({ where: { email } });
     const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
 
-    // Same error for both cases to prevent user enumeration
     if (!user || !passwordMatch) {
       return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
     }
@@ -23,7 +22,11 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
     }
 
-    const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign(
+      { userId: user.id, organizationId: user.organizationId, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "8h" }
+    );
 
     const response = NextResponse.json({ message: "Login correcto", userId: user.id });
 
@@ -32,7 +35,7 @@ export async function POST(req: NextRequest) {
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
       path: "/",
-      maxAge: 60 * 60,
+      maxAge: 60 * 60 * 8,
     });
 
     return response;

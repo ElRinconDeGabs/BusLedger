@@ -3,15 +3,27 @@ import jwt from "jsonwebtoken";
 
 export const AUTH_COOKIE = "auth_token";
 
-export function getUserIdFromToken(req: NextRequest): number | null {
+export type TokenPayload = {
+  userId: number;
+  organizationId: number;
+  role: "ADMIN" | "USER";
+};
+
+export function getUserContext(req: NextRequest): TokenPayload | null {
   try {
     const token = req.cookies.get(AUTH_COOKIE)?.value;
     if (!token || !process.env.JWT_SECRET) return null;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: number };
-    return decoded.userId;
+    const decoded = jwt.verify(token, process.env.JWT_SECRET) as TokenPayload;
+    if (!decoded.userId) return null;
+    return decoded;
   } catch {
     return null;
   }
+}
+
+// Backward-compat alias for routes that only need userId
+export function getUserIdFromToken(req: NextRequest): number | null {
+  return getUserContext(req)?.userId ?? null;
 }
 
 // In-memory rate limiter (resets on server restart; swap for Redis in multi-instance deploys)

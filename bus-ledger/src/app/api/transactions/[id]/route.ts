@@ -1,16 +1,26 @@
 import { prisma } from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
-import { getUserIdFromToken } from "@/lib/server/getAuth";
+import { getUserContext } from "@/lib/server/getAuth";
 
 const VALID_TYPES = new Set(["ingreso", "gasto", "income"]);
 
+async function findTx(id: number, ctx: { role: string; userId: number; organizationId: number }) {
+  return prisma.transaction.findFirst({
+    where:
+      ctx.role === "ADMIN"
+        ? { id, busito: { organizationId: ctx.organizationId } }
+        : { id, userId: ctx.userId },
+    select: { id: true },
+  });
+}
+
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getUserIdFromToken(req);
-  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const ctx = getUserContext(req);
+  if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
     const { id } = await params;
-    const tx = await prisma.transaction.findFirst({ where: { id: Number(id), userId }, select: { id: true } });
+    const tx = await findTx(Number(id), ctx);
     if (!tx) return NextResponse.json({ error: "Transaccion no encontrada" }, { status: 404 });
 
     await prisma.transaction.delete({ where: { id: Number(id) } });
@@ -22,14 +32,14 @@ export async function DELETE(req: NextRequest, { params }: { params: Promise<{ i
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getUserIdFromToken(req);
-  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const ctx = getUserContext(req);
+  if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
     const { id } = await params;
     const body = await req.json();
 
-    const tx = await prisma.transaction.findFirst({ where: { id: Number(id), userId }, select: { id: true } });
+    const tx = await findTx(Number(id), ctx);
     if (!tx) return NextResponse.json({ error: "Transaccion no encontrada" }, { status: 404 });
 
     if (body.type && !VALID_TYPES.has(String(body.type).toLowerCase())) {

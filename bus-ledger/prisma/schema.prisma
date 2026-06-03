@@ -7,29 +7,47 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
+enum Role {
+  ADMIN
+  USER
+}
+
+model Organization {
   id        Int      @id @default(autoincrement())
   name      String
-  email     String   @unique
-  password  String
   createdAt DateTime @default(now())
+  users     User[]
   busitos   Busito[]
-  transactions Transaction[]
+}
+
+model User {
+  id             Int           @id @default(autoincrement())
+  name           String
+  email          String        @unique
+  password       String
+  role           Role          @default(USER)
+  organizationId Int
+  organization   Organization  @relation(fields: [organizationId], references: [id])
+  createdAt      DateTime      @default(now())
+  busitos        Busito[]
+  transactions   Transaction[]
 }
 
 model Busito {
-  id           Int           @id @default(autoincrement())
-  name         String
-  description  String?
-  plateNumber  String?
-  capacity     Int?
-  model        String?
-  year         Int?
-  userId       Int
-  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  transactions Transaction[]
-  createdAt    DateTime      @default(now())
-  updatedAt    DateTime      @default(now()) @updatedAt
+  id             Int           @id @default(autoincrement())
+  name           String
+  description    String?
+  plateNumber    String?
+  capacity       Int?
+  model          String?
+  year           Int?
+  userId         Int
+  organizationId Int
+  user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization   Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  transactions   Transaction[]
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @default(now()) @updatedAt
 }
 
 model Transaction {
@@ -38,10 +56,8 @@ model Transaction {
   description String
   type        String
   createdAt   DateTime @default(now())
-
-  userId   Int
-  user     User   @relation(fields: [userId], references: [id])
-
-  busitoId Int
-  busito   Busito @relation(fields: [busitoId], references: [id], onDelete: Cascade)
+  userId      Int
+  user        User     @relation(fields: [userId], references: [id])
+  busitoId    Int
+  busito      Busito   @relation(fields: [busitoId], references: [id], onDelete: Cascade)
 }

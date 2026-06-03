@@ -31,6 +31,7 @@ export type BusitoAvgAggregateOutputType = {
   capacity: number | null
   year: number | null
   userId: number | null
+  organizationId: number | null
 }
 
 export type BusitoSumAggregateOutputType = {
@@ -38,6 +39,7 @@ export type BusitoSumAggregateOutputType = {
   capacity: number | null
   year: number | null
   userId: number | null
+  organizationId: number | null
 }
 
 export type BusitoMinAggregateOutputType = {
@@ -49,6 +51,7 @@ export type BusitoMinAggregateOutputType = {
   model: string | null
   year: number | null
   userId: number | null
+  organizationId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -62,6 +65,7 @@ export type BusitoMaxAggregateOutputType = {
   model: string | null
   year: number | null
   userId: number | null
+  organizationId: number | null
   createdAt: Date | null
   updatedAt: Date | null
 }
@@ -75,6 +79,7 @@ export type BusitoCountAggregateOutputType = {
   model: number
   year: number
   userId: number
+  organizationId: number
   createdAt: number
   updatedAt: number
   _all: number
@@ -86,6 +91,7 @@ export type BusitoAvgAggregateInputType = {
   capacity?: true
   year?: true
   userId?: true
+  organizationId?: true
 }
 
 export type BusitoSumAggregateInputType = {
@@ -93,6 +99,7 @@ export type BusitoSumAggregateInputType = {
   capacity?: true
   year?: true
   userId?: true
+  organizationId?: true
 }
 
 export type BusitoMinAggregateInputType = {
@@ -104,6 +111,7 @@ export type BusitoMinAggregateInputType = {
   model?: true
   year?: true
   userId?: true
+  organizationId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -117,6 +125,7 @@ export type BusitoMaxAggregateInputType = {
   model?: true
   year?: true
   userId?: true
+  organizationId?: true
   createdAt?: true
   updatedAt?: true
 }
@@ -130,6 +139,7 @@ export type BusitoCountAggregateInputType = {
   model?: true
   year?: true
   userId?: true
+  organizationId?: true
   createdAt?: true
   updatedAt?: true
   _all?: true
@@ -230,6 +240,7 @@ export type BusitoGroupByOutputType = {
   model: string | null
   year: number | null
   userId: number
+  organizationId: number
   createdAt: Date
   updatedAt: Date
   _count: BusitoCountAggregateOutputType | null
@@ -266,9 +277,11 @@ export type BusitoWhereInput = {
   model?: Prisma.StringNullableFilter<"Busito"> | string | null
   year?: Prisma.IntNullableFilter<"Busito"> | number | null
   userId?: Prisma.IntFilter<"Busito"> | number
+  organizationId?: Prisma.IntFilter<"Busito"> | number
   createdAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
 }
 
@@ -281,9 +294,11 @@ export type BusitoOrderByWithRelationInput = {
   model?: Prisma.SortOrderInput | Prisma.SortOrder
   year?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   user?: Prisma.UserOrderByWithRelationInput
+  organization?: Prisma.OrganizationOrderByWithRelationInput
   transactions?: Prisma.TransactionOrderByRelationAggregateInput
 }
 
@@ -299,9 +314,11 @@ export type BusitoWhereUniqueInput = Prisma.AtLeast<{
   model?: Prisma.StringNullableFilter<"Busito"> | string | null
   year?: Prisma.IntNullableFilter<"Busito"> | number | null
   userId?: Prisma.IntFilter<"Busito"> | number
+  organizationId?: Prisma.IntFilter<"Busito"> | number
   createdAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
   updatedAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
   user?: Prisma.XOR<Prisma.UserScalarRelationFilter, Prisma.UserWhereInput>
+  organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   transactions?: Prisma.TransactionListRelationFilter
 }, "id">
 
@@ -314,6 +331,7 @@ export type BusitoOrderByWithAggregationInput = {
   model?: Prisma.SortOrderInput | Prisma.SortOrder
   year?: Prisma.SortOrderInput | Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
   _count?: Prisma.BusitoCountOrderByAggregateInput
@@ -335,6 +353,7 @@ export type BusitoScalarWhereWithAggregatesInput = {
   model?: Prisma.StringNullableWithAggregatesFilter<"Busito"> | string | null
   year?: Prisma.IntNullableWithAggregatesFilter<"Busito"> | number | null
   userId?: Prisma.IntWithAggregatesFilter<"Busito"> | number
+  organizationId?: Prisma.IntWithAggregatesFilter<"Busito"> | number
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"Busito"> | Date | string
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"Busito"> | Date | string
 }
@@ -349,6 +368,7 @@ export type BusitoCreateInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutBusitosInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutBusitosInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutBusitoInput
 }
 
@@ -361,6 +381,7 @@ export type BusitoUncheckedCreateInput = {
   model?: string | null
   year?: number | null
   userId: number
+  organizationId: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutBusitoInput
@@ -376,6 +397,7 @@ export type BusitoUpdateInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutBusitosNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBusitosNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutBusitoNestedInput
 }
 
@@ -388,6 +410,7 @@ export type BusitoUncheckedUpdateInput = {
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  organizationId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutBusitoNestedInput
@@ -402,6 +425,7 @@ export type BusitoCreateManyInput = {
   model?: string | null
   year?: number | null
   userId: number
+  organizationId: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -426,6 +450,7 @@ export type BusitoUncheckedUpdateManyInput = {
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   userId?: Prisma.IntFieldUpdateOperationsInput | number
+  organizationId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -449,6 +474,7 @@ export type BusitoCountOrderByAggregateInput = {
   model?: Prisma.SortOrder
   year?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -458,6 +484,7 @@ export type BusitoAvgOrderByAggregateInput = {
   capacity?: Prisma.SortOrder
   year?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
 }
 
 export type BusitoMaxOrderByAggregateInput = {
@@ -469,6 +496,7 @@ export type BusitoMaxOrderByAggregateInput = {
   model?: Prisma.SortOrder
   year?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -482,6 +510,7 @@ export type BusitoMinOrderByAggregateInput = {
   model?: Prisma.SortOrder
   year?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
 }
@@ -491,11 +520,54 @@ export type BusitoSumOrderByAggregateInput = {
   capacity?: Prisma.SortOrder
   year?: Prisma.SortOrder
   userId?: Prisma.SortOrder
+  organizationId?: Prisma.SortOrder
 }
 
 export type BusitoScalarRelationFilter = {
   is?: Prisma.BusitoWhereInput
   isNot?: Prisma.BusitoWhereInput
+}
+
+export type BusitoCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.BusitoCreateWithoutOrganizationInput, Prisma.BusitoUncheckedCreateWithoutOrganizationInput> | Prisma.BusitoCreateWithoutOrganizationInput[] | Prisma.BusitoUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.BusitoCreateOrConnectWithoutOrganizationInput | Prisma.BusitoCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.BusitoCreateManyOrganizationInputEnvelope
+  connect?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+}
+
+export type BusitoUncheckedCreateNestedManyWithoutOrganizationInput = {
+  create?: Prisma.XOR<Prisma.BusitoCreateWithoutOrganizationInput, Prisma.BusitoUncheckedCreateWithoutOrganizationInput> | Prisma.BusitoCreateWithoutOrganizationInput[] | Prisma.BusitoUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.BusitoCreateOrConnectWithoutOrganizationInput | Prisma.BusitoCreateOrConnectWithoutOrganizationInput[]
+  createMany?: Prisma.BusitoCreateManyOrganizationInputEnvelope
+  connect?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+}
+
+export type BusitoUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.BusitoCreateWithoutOrganizationInput, Prisma.BusitoUncheckedCreateWithoutOrganizationInput> | Prisma.BusitoCreateWithoutOrganizationInput[] | Prisma.BusitoUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.BusitoCreateOrConnectWithoutOrganizationInput | Prisma.BusitoCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.BusitoUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.BusitoUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.BusitoCreateManyOrganizationInputEnvelope
+  set?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  disconnect?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  delete?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  connect?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  update?: Prisma.BusitoUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.BusitoUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.BusitoUpdateManyWithWhereWithoutOrganizationInput | Prisma.BusitoUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.BusitoScalarWhereInput | Prisma.BusitoScalarWhereInput[]
+}
+
+export type BusitoUncheckedUpdateManyWithoutOrganizationNestedInput = {
+  create?: Prisma.XOR<Prisma.BusitoCreateWithoutOrganizationInput, Prisma.BusitoUncheckedCreateWithoutOrganizationInput> | Prisma.BusitoCreateWithoutOrganizationInput[] | Prisma.BusitoUncheckedCreateWithoutOrganizationInput[]
+  connectOrCreate?: Prisma.BusitoCreateOrConnectWithoutOrganizationInput | Prisma.BusitoCreateOrConnectWithoutOrganizationInput[]
+  upsert?: Prisma.BusitoUpsertWithWhereUniqueWithoutOrganizationInput | Prisma.BusitoUpsertWithWhereUniqueWithoutOrganizationInput[]
+  createMany?: Prisma.BusitoCreateManyOrganizationInputEnvelope
+  set?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  disconnect?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  delete?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  connect?: Prisma.BusitoWhereUniqueInput | Prisma.BusitoWhereUniqueInput[]
+  update?: Prisma.BusitoUpdateWithWhereUniqueWithoutOrganizationInput | Prisma.BusitoUpdateWithWhereUniqueWithoutOrganizationInput[]
+  updateMany?: Prisma.BusitoUpdateManyWithWhereWithoutOrganizationInput | Prisma.BusitoUpdateManyWithWhereWithoutOrganizationInput[]
+  deleteMany?: Prisma.BusitoScalarWhereInput | Prisma.BusitoScalarWhereInput[]
 }
 
 export type BusitoCreateNestedManyWithoutUserInput = {
@@ -566,6 +638,76 @@ export type BusitoUpdateOneRequiredWithoutTransactionsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.BusitoUpdateToOneWithWhereWithoutTransactionsInput, Prisma.BusitoUpdateWithoutTransactionsInput>, Prisma.BusitoUncheckedUpdateWithoutTransactionsInput>
 }
 
+export type BusitoCreateWithoutOrganizationInput = {
+  name: string
+  description?: string | null
+  plateNumber?: string | null
+  capacity?: number | null
+  model?: string | null
+  year?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  user: Prisma.UserCreateNestedOneWithoutBusitosInput
+  transactions?: Prisma.TransactionCreateNestedManyWithoutBusitoInput
+}
+
+export type BusitoUncheckedCreateWithoutOrganizationInput = {
+  id?: number
+  name: string
+  description?: string | null
+  plateNumber?: string | null
+  capacity?: number | null
+  model?: string | null
+  year?: number | null
+  userId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutBusitoInput
+}
+
+export type BusitoCreateOrConnectWithoutOrganizationInput = {
+  where: Prisma.BusitoWhereUniqueInput
+  create: Prisma.XOR<Prisma.BusitoCreateWithoutOrganizationInput, Prisma.BusitoUncheckedCreateWithoutOrganizationInput>
+}
+
+export type BusitoCreateManyOrganizationInputEnvelope = {
+  data: Prisma.BusitoCreateManyOrganizationInput | Prisma.BusitoCreateManyOrganizationInput[]
+  skipDuplicates?: boolean
+}
+
+export type BusitoUpsertWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.BusitoWhereUniqueInput
+  update: Prisma.XOR<Prisma.BusitoUpdateWithoutOrganizationInput, Prisma.BusitoUncheckedUpdateWithoutOrganizationInput>
+  create: Prisma.XOR<Prisma.BusitoCreateWithoutOrganizationInput, Prisma.BusitoUncheckedCreateWithoutOrganizationInput>
+}
+
+export type BusitoUpdateWithWhereUniqueWithoutOrganizationInput = {
+  where: Prisma.BusitoWhereUniqueInput
+  data: Prisma.XOR<Prisma.BusitoUpdateWithoutOrganizationInput, Prisma.BusitoUncheckedUpdateWithoutOrganizationInput>
+}
+
+export type BusitoUpdateManyWithWhereWithoutOrganizationInput = {
+  where: Prisma.BusitoScalarWhereInput
+  data: Prisma.XOR<Prisma.BusitoUpdateManyMutationInput, Prisma.BusitoUncheckedUpdateManyWithoutOrganizationInput>
+}
+
+export type BusitoScalarWhereInput = {
+  AND?: Prisma.BusitoScalarWhereInput | Prisma.BusitoScalarWhereInput[]
+  OR?: Prisma.BusitoScalarWhereInput[]
+  NOT?: Prisma.BusitoScalarWhereInput | Prisma.BusitoScalarWhereInput[]
+  id?: Prisma.IntFilter<"Busito"> | number
+  name?: Prisma.StringFilter<"Busito"> | string
+  description?: Prisma.StringNullableFilter<"Busito"> | string | null
+  plateNumber?: Prisma.StringNullableFilter<"Busito"> | string | null
+  capacity?: Prisma.IntNullableFilter<"Busito"> | number | null
+  model?: Prisma.StringNullableFilter<"Busito"> | string | null
+  year?: Prisma.IntNullableFilter<"Busito"> | number | null
+  userId?: Prisma.IntFilter<"Busito"> | number
+  organizationId?: Prisma.IntFilter<"Busito"> | number
+  createdAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
+  updatedAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
+}
+
 export type BusitoCreateWithoutUserInput = {
   name: string
   description?: string | null
@@ -575,6 +717,7 @@ export type BusitoCreateWithoutUserInput = {
   year?: number | null
   createdAt?: Date | string
   updatedAt?: Date | string
+  organization: Prisma.OrganizationCreateNestedOneWithoutBusitosInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutBusitoInput
 }
 
@@ -586,6 +729,7 @@ export type BusitoUncheckedCreateWithoutUserInput = {
   capacity?: number | null
   model?: string | null
   year?: number | null
+  organizationId: number
   createdAt?: Date | string
   updatedAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutBusitoInput
@@ -617,22 +761,6 @@ export type BusitoUpdateManyWithWhereWithoutUserInput = {
   data: Prisma.XOR<Prisma.BusitoUpdateManyMutationInput, Prisma.BusitoUncheckedUpdateManyWithoutUserInput>
 }
 
-export type BusitoScalarWhereInput = {
-  AND?: Prisma.BusitoScalarWhereInput | Prisma.BusitoScalarWhereInput[]
-  OR?: Prisma.BusitoScalarWhereInput[]
-  NOT?: Prisma.BusitoScalarWhereInput | Prisma.BusitoScalarWhereInput[]
-  id?: Prisma.IntFilter<"Busito"> | number
-  name?: Prisma.StringFilter<"Busito"> | string
-  description?: Prisma.StringNullableFilter<"Busito"> | string | null
-  plateNumber?: Prisma.StringNullableFilter<"Busito"> | string | null
-  capacity?: Prisma.IntNullableFilter<"Busito"> | number | null
-  model?: Prisma.StringNullableFilter<"Busito"> | string | null
-  year?: Prisma.IntNullableFilter<"Busito"> | number | null
-  userId?: Prisma.IntFilter<"Busito"> | number
-  createdAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
-  updatedAt?: Prisma.DateTimeFilter<"Busito"> | Date | string
-}
-
 export type BusitoCreateWithoutTransactionsInput = {
   name: string
   description?: string | null
@@ -643,6 +771,7 @@ export type BusitoCreateWithoutTransactionsInput = {
   createdAt?: Date | string
   updatedAt?: Date | string
   user: Prisma.UserCreateNestedOneWithoutBusitosInput
+  organization: Prisma.OrganizationCreateNestedOneWithoutBusitosInput
 }
 
 export type BusitoUncheckedCreateWithoutTransactionsInput = {
@@ -654,6 +783,7 @@ export type BusitoUncheckedCreateWithoutTransactionsInput = {
   model?: string | null
   year?: number | null
   userId: number
+  organizationId: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -684,9 +814,64 @@ export type BusitoUpdateWithoutTransactionsInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   user?: Prisma.UserUpdateOneRequiredWithoutBusitosNestedInput
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBusitosNestedInput
 }
 
 export type BusitoUncheckedUpdateWithoutTransactionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  capacity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  organizationId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+}
+
+export type BusitoCreateManyOrganizationInput = {
+  id?: number
+  name: string
+  description?: string | null
+  plateNumber?: string | null
+  capacity?: number | null
+  model?: string | null
+  year?: number | null
+  userId: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+}
+
+export type BusitoUpdateWithoutOrganizationInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  capacity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  user?: Prisma.UserUpdateOneRequiredWithoutBusitosNestedInput
+  transactions?: Prisma.TransactionUpdateManyWithoutBusitoNestedInput
+}
+
+export type BusitoUncheckedUpdateWithoutOrganizationInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  plateNumber?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  capacity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  userId?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  transactions?: Prisma.TransactionUncheckedUpdateManyWithoutBusitoNestedInput
+}
+
+export type BusitoUncheckedUpdateManyWithoutOrganizationInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
@@ -707,6 +892,7 @@ export type BusitoCreateManyUserInput = {
   capacity?: number | null
   model?: string | null
   year?: number | null
+  organizationId: number
   createdAt?: Date | string
   updatedAt?: Date | string
 }
@@ -720,6 +906,7 @@ export type BusitoUpdateWithoutUserInput = {
   year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  organization?: Prisma.OrganizationUpdateOneRequiredWithoutBusitosNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutBusitoNestedInput
 }
 
@@ -731,6 +918,7 @@ export type BusitoUncheckedUpdateWithoutUserInput = {
   capacity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  organizationId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutBusitoNestedInput
@@ -744,6 +932,7 @@ export type BusitoUncheckedUpdateManyWithoutUserInput = {
   capacity?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   model?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   year?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  organizationId?: Prisma.IntFieldUpdateOperationsInput | number
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -788,9 +977,11 @@ export type BusitoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   model?: boolean
   year?: boolean
   userId?: boolean
+  organizationId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Busito$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.BusitoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["busito"]>
@@ -804,9 +995,11 @@ export type BusitoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extens
   model?: boolean
   year?: boolean
   userId?: boolean
+  organizationId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["busito"]>
 
 export type BusitoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -818,9 +1011,11 @@ export type BusitoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extens
   model?: boolean
   year?: boolean
   userId?: boolean
+  organizationId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["busito"]>
 
 export type BusitoSelectScalar = {
@@ -832,27 +1027,32 @@ export type BusitoSelectScalar = {
   model?: boolean
   year?: boolean
   userId?: boolean
+  organizationId?: boolean
   createdAt?: boolean
   updatedAt?: boolean
 }
 
-export type BusitoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "plateNumber" | "capacity" | "model" | "year" | "userId" | "createdAt" | "updatedAt", ExtArgs["result"]["busito"]>
+export type BusitoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "plateNumber" | "capacity" | "model" | "year" | "userId" | "organizationId" | "createdAt" | "updatedAt", ExtArgs["result"]["busito"]>
 export type BusitoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   transactions?: boolean | Prisma.Busito$transactionsArgs<ExtArgs>
   _count?: boolean | Prisma.BusitoCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type BusitoIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }
 export type BusitoIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   user?: boolean | Prisma.UserDefaultArgs<ExtArgs>
+  organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }
 
 export type $BusitoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "Busito"
   objects: {
     user: Prisma.$UserPayload<ExtArgs>
+    organization: Prisma.$OrganizationPayload<ExtArgs>
     transactions: Prisma.$TransactionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
@@ -864,6 +1064,7 @@ export type $BusitoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     model: string | null
     year: number | null
     userId: number
+    organizationId: number
     createdAt: Date
     updatedAt: Date
   }, ExtArgs["result"]["busito"]>
@@ -1261,6 +1462,7 @@ readonly fields: BusitoFieldRefs;
 export interface Prisma__BusitoClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   user<T extends Prisma.UserDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.UserDefaultArgs<ExtArgs>>): Prisma.Prisma__UserClient<runtime.Types.Result.GetResult<Prisma.$UserPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  organization<T extends Prisma.OrganizationDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.OrganizationDefaultArgs<ExtArgs>>): Prisma.Prisma__OrganizationClient<runtime.Types.Result.GetResult<Prisma.$OrganizationPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   transactions<T extends Prisma.Busito$transactionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Busito$transactionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TransactionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
@@ -1299,6 +1501,7 @@ export interface BusitoFieldRefs {
   readonly model: Prisma.FieldRef<"Busito", 'String'>
   readonly year: Prisma.FieldRef<"Busito", 'Int'>
   readonly userId: Prisma.FieldRef<"Busito", 'Int'>
+  readonly organizationId: Prisma.FieldRef<"Busito", 'Int'>
   readonly createdAt: Prisma.FieldRef<"Busito", 'DateTime'>
   readonly updatedAt: Prisma.FieldRef<"Busito", 'DateTime'>
 }

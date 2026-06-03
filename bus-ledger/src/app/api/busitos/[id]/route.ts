@@ -1,15 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import { getUserIdFromToken } from "@/lib/server/getAuth";
+import { getUserContext } from "@/lib/server/getAuth";
+
+function buildWhere(id: number, ctx: { role: string; userId: number; organizationId: number }) {
+  return ctx.role === "ADMIN"
+    ? { id, organizationId: ctx.organizationId }
+    : { id, userId: ctx.userId };
+}
 
 export async function GET(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getUserIdFromToken(req);
-  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const ctx = getUserContext(req);
+  if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
     const { id } = await params;
     const busito = await prisma.busito.findFirst({
-      where: { id: Number(id), userId },
+      where: buildWhere(Number(id), ctx),
       include: { transactions: { orderBy: { createdAt: "desc" }, take: 50 } },
     });
 
@@ -22,14 +28,14 @@ export async function GET(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getUserIdFromToken(req);
-  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const ctx = getUserContext(req);
+  if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
     const { id } = await params;
     const body = await req.json();
 
-    const exists = await prisma.busito.findFirst({ where: { id: Number(id), userId }, select: { id: true } });
+    const exists = await prisma.busito.findFirst({ where: buildWhere(Number(id), ctx), select: { id: true } });
     if (!exists) return NextResponse.json({ error: "Busito no encontrado" }, { status: 404 });
 
     const busito = await prisma.busito.update({
@@ -52,12 +58,12 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
 }
 
 export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
-  const userId = getUserIdFromToken(req);
-  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const ctx = getUserContext(req);
+  if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
     const { id } = await params;
-    const exists = await prisma.busito.findFirst({ where: { id: Number(id), userId }, select: { id: true } });
+    const exists = await prisma.busito.findFirst({ where: buildWhere(Number(id), ctx), select: { id: true } });
     if (!exists) return NextResponse.json({ error: "Busito no encontrado" }, { status: 404 });
 
     await prisma.busito.delete({ where: { id: Number(id) } });

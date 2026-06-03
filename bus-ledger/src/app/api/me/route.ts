@@ -13,11 +13,26 @@ export async function GET(req: NextRequest) {
 
     const user = await prisma.user.findUnique({
       where: { id: decoded.userId },
-      select: { id: true, name: true, email: true },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        role: true,
+        organizationId: true,
+        organization: { select: { name: true } },
+      },
     });
 
     if (!user) return NextResponse.json({ error: "Usuario no encontrado" }, { status: 404 });
-    return NextResponse.json(user);
+
+    return NextResponse.json({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+      organizationId: user.organizationId,
+      organizationName: user.organization.name,
+    });
   } catch {
     return NextResponse.json({ error: "Token inválido" }, { status: 401 });
   }
