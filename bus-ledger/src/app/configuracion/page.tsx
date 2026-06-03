@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useMemo, useState } from "react";
+
+const PASSWORD_POLICY = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
 import DashboardShell from "@/components/dashboard/dashboard-shell";
 import {
   getBrowserDefaults,
@@ -36,6 +38,10 @@ export default function ConfiguracionPage() {
   const [currency, setCurrency] = useState(initial.currency);
   const [saved, setSaved] = useState(false);
 
+  const [pwForm, setPwForm] = useState({ current: "", next: "", confirm: "" });
+  const [pwStatus, setPwStatus] = useState<{ ok: boolean; msg: string } | null>(null);
+  const [pwLoading, setPwLoading] = useState(false);
+
   const browserDefaults = useMemo(() => getBrowserDefaults(), []);
   const preview = useMemo(() => formatMoney(152340.75, { locale, currency }), [locale, currency]);
 
@@ -50,6 +56,43 @@ export default function ConfiguracionPage() {
     setLocale(defaults.locale);
     setCurrency(defaults.currency);
     setSaved(false);
+  };
+
+  const handleChangePassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setPwStatus(null);
+
+    if (pwForm.next !== pwForm.confirm) {
+      setPwStatus({ ok: false, msg: "Las contraseñas nuevas no coinciden" });
+      return;
+    }
+
+    if (!PASSWORD_POLICY.test(pwForm.next)) {
+      setPwStatus({ ok: false, msg: "La nueva contraseña debe tener 8 a 20 caracteres, letras y numeros, sin caracteres especiales" });
+      return;
+    }
+
+    setPwLoading(true);
+    try {
+      const res = await fetch("/api/auth/change-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currentPassword: pwForm.current, newPassword: pwForm.next }),
+      });
+
+      const data = await res.json() as { message?: string; error?: string };
+
+      if (!res.ok) {
+        setPwStatus({ ok: false, msg: data.error ?? "Error al cambiar contraseña" });
+      } else {
+        setPwStatus({ ok: true, msg: data.message ?? "Contraseña actualizada" });
+        setPwForm({ current: "", next: "", confirm: "" });
+      }
+    } catch {
+      setPwStatus({ ok: false, msg: "Error de conexion" });
+    } finally {
+      setPwLoading(false);
+    }
   };
 
   return (
@@ -125,6 +168,72 @@ export default function ConfiguracionPage() {
           </button>
           {saved && <span className="text-sm font-medium text-emerald-600">Guardado</span>}
         </div>
+      </section>
+      <section className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <h2 className="text-lg font-semibold text-slate-900">Cambiar contraseña</h2>
+        <p className="mt-1 text-sm text-slate-500">Ingresa tu contraseña actual y luego la nueva.</p>
+
+        <form onSubmit={handleChangePassword} className="mt-5 space-y-3" noValidate>
+          <div>
+            <label htmlFor="pw-current" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+              Contraseña actual
+            </label>
+            <input
+              id="pw-current"
+              type="password"
+              value={pwForm.current}
+              onChange={(e) => setPwForm((old) => ({ ...old, current: e.target.value }))}
+              autoComplete="current-password"
+              required
+              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+            />
+          </div>
+
+          <div>
+            <label htmlFor="pw-next" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+              Nueva contraseña
+            </label>
+            <input
+              id="pw-next"
+              type="password"
+              value={pwForm.next}
+              onChange={(e) => setPwForm((old) => ({ ...old, next: e.target.value }))}
+              autoComplete="new-password"
+              required
+              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+            />
+            <p className="mt-1 text-xs text-slate-400">8-20 caracteres, letras y numeros, sin caracteres especiales.</p>
+          </div>
+
+          <div>
+            <label htmlFor="pw-confirm" className="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">
+              Confirmar nueva contraseña
+            </label>
+            <input
+              id="pw-confirm"
+              type="password"
+              value={pwForm.confirm}
+              onChange={(e) => setPwForm((old) => ({ ...old, confirm: e.target.value }))}
+              autoComplete="new-password"
+              required
+              className="w-full rounded-xl border border-slate-200 px-3 py-2.5 text-sm outline-none ring-blue-100 focus:border-blue-500 focus:ring-2"
+            />
+          </div>
+
+          {pwStatus && (
+            <div className={`rounded-xl px-3 py-2 text-sm ${pwStatus.ok ? "bg-emerald-50 text-emerald-700" : "bg-rose-50 text-rose-700"}`}>
+              {pwStatus.msg}
+            </div>
+          )}
+
+          <button
+            type="submit"
+            disabled={pwLoading}
+            className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
+          >
+            {pwLoading ? "Guardando..." : "Cambiar contraseña"}
+          </button>
+        </form>
       </section>
     </DashboardShell>
   );
