@@ -1,19 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
-
-const AUTH_COOKIE = "auth_token";
-
-function getUserIdFromToken(req: NextRequest): number | null {
-  try {
-    const token = req.cookies.get(AUTH_COOKIE)?.value;
-    if (!token || !process.env.JWT_SECRET) return null;
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: number };
-    return decoded.userId;
-  } catch {
-    return null;
-  }
-}
+import { getUserIdFromToken } from "@/lib/server/getAuth";
 
 function isIngreso(type: string) {
   const t = type.toLowerCase();
@@ -21,10 +8,10 @@ function isIngreso(type: string) {
 }
 
 export async function GET(req: NextRequest) {
-  try {
-    const userId = getUserIdFromToken(req);
-    if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+  const userId = getUserIdFromToken(req);
+  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
+  try {
     const txs = await prisma.transaction.findMany({
       where: { userId },
       select: { amount: true, type: true, createdAt: true },
@@ -51,11 +38,7 @@ export async function GET(req: NextRequest) {
     }
 
     return NextResponse.json({
-      totals: {
-        ingresos: totalIngresos,
-        egresos: totalEgresos,
-        balance: totalIngresos - totalEgresos,
-      },
+      totals: { ingresos: totalIngresos, egresos: totalEgresos, balance: totalIngresos - totalEgresos },
       monthly: Array.from(monthlyMap.values()),
     });
   } catch (error) {

@@ -1,34 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
-import jwt from "jsonwebtoken";
-
-const AUTH_COOKIE = "auth_token";
-
-function getUserIdFromToken(req: NextRequest): number | null {
-  try {
-    const token = req.cookies.get(AUTH_COOKIE)?.value;
-    if (!token || !process.env.JWT_SECRET) return null;
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET) as { userId: number };
-    return decoded.userId;
-  } catch {
-    return null;
-  }
-}
+import { getUserIdFromToken } from "@/lib/server/getAuth";
 
 export async function GET(req: NextRequest) {
+  const userId = getUserIdFromToken(req);
+  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+
   try {
-    const userId = getUserIdFromToken(req);
-
-    if (!userId) {
-      return NextResponse.json({ error: "No autenticado" }, { status: 401 });
-    }
-
     const busitos = await prisma.busito.findMany({
       where: { userId },
       orderBy: { createdAt: "desc" },
     });
-
     return NextResponse.json(busitos);
   } catch (error) {
     console.error("Error fetching busitos:", error);
@@ -37,19 +19,13 @@ export async function GET(req: NextRequest) {
 }
 
 export async function POST(req: NextRequest) {
+  const userId = getUserIdFromToken(req);
+  if (!userId) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
+
   try {
-    const userId = getUserIdFromToken(req);
+    const { name, description, plateNumber, capacity, model, year } = await req.json();
 
-    if (!userId) {
-      return NextResponse.json({ error: "No autenticado" }, { status: 401 });
-    }
-
-    const body = await req.json();
-    const { name, description, plateNumber, capacity, model, year } = body;
-
-    if (!name) {
-      return NextResponse.json({ error: "El nombre es requerido" }, { status: 400 });
-    }
+    if (!name) return NextResponse.json({ error: "El nombre es requerido" }, { status: 400 });
 
     const busito = await prisma.busito.create({
       data: {

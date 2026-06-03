@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import MainCharts from "@/components/dashboard/main-charts";
 import DashboardShell from "@/components/dashboard/dashboard-shell";
@@ -14,20 +14,23 @@ type Transaction = {
   description: string;
   type: string;
   createdAt: string;
-  busito?: {
-    id: number;
-    name: string;
-  };
+  busito?: { id: number; name: string };
 };
 
-type Busito = {
-  id: number;
+type Busito = { id: number };
+
+type MonthlySummary = {
+  month: string;
+  ingresos: number;
+  egresos: number;
+  balance: number;
 };
 
 export default function DashboardPage() {
   const settings = useDisplaySettings();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [busitos, setBusitos] = useState<Busito[]>([]);
+  const [currentMonth, setCurrentMonth] = useState<MonthlySummary | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,13 +39,20 @@ export default function DashboardPage() {
 
   const bootstrap = async () => {
     try {
-      const [busitosRes, transactionsRes] = await Promise.all([
+      const [busitosRes, transactionsRes, summaryRes] = await Promise.all([
         fetch("/api/busitos"),
         fetch("/api/transactions?limit=8"),
+        fetch("/api/dashboard/summary"),
       ]);
 
       if (busitosRes.ok) setBusitos((await busitosRes.json()) as Busito[]);
       if (transactionsRes.ok) setTransactions((await transactionsRes.json()) as Transaction[]);
+      if (summaryRes.ok) {
+        const summary = (await summaryRes.json()) as { monthly: MonthlySummary[] };
+        const now = new Date();
+        const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
+        setCurrentMonth(summary.monthly.find((m) => m.month === key) ?? null);
+      }
     } finally {
       setLoading(false);
     }
@@ -50,40 +60,13 @@ export default function DashboardPage() {
 
   const fmt = (n: number) => formatMoney(n, settings);
 
-  const metrics = useMemo(() => {
-    const now = new Date();
-    const month = now.getMonth();
-    const year = now.getFullYear();
-
-    const monthTransactions = transactions.filter((tx) => {
-      const date = new Date(tx.createdAt);
-      return date.getMonth() === month && date.getFullYear() === year;
-    });
-
-    const ingresosMes = monthTransactions
-      .filter((tx) => tx.type.toLowerCase() === "ingreso" || tx.type.toLowerCase() === "income")
-      .reduce((sum, tx) => sum + Number(tx.amount), 0);
-
-    const gastosMes = monthTransactions
-      .filter((tx) => tx.type.toLowerCase() !== "ingreso" && tx.type.toLowerCase() !== "income")
-      .reduce((sum, tx) => sum + Number(tx.amount), 0);
-
-    return {
-      totalBusitos: busitos.length,
-      totalTransactions: transactions.length,
-      ingresosMes,
-      gastosMes,
-      balance: ingresosMes - gastosMes,
-    };
-  }, [busitos, transactions]);
-
   return (
     <DashboardShell title="Dashboard" currentPath="/dashboard">
       <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatsCard title="Total de Busitos" value={String(metrics.totalBusitos)} subtitle="Unidades registradas" icon="bus" />
-        <StatsCard title="Movimientos Recientes" value={String(metrics.totalTransactions)} subtitle="Ultimas transacciones" icon="transactions" />
-        <StatsCard title="Ingresos del Mes" value={fmt(metrics.ingresosMes)} subtitle="Entradas del periodo actual" icon="income" />
-        <StatsCard title="Gastos del Mes" value={fmt(metrics.gastosMes)} subtitle="Salidas del periodo actual" icon="expense" />
+        <StatsCard title="Total de Busitos" value={String(busitos.length)} subtitle="Unidades registradas" icon="bus" />
+        <StatsCard title="Movimientos Recientes" value={String(transactions.length)} subtitle="Ultimas transacciones" icon="transactions" />
+        <StatsCard title="Ingresos del Mes" value={fmt(currentMonth?.ingresos ?? 0)} subtitle="Entradas del periodo actual" icon="income" />
+        <StatsCard title="Gastos del Mes" value={fmt(currentMonth?.egresos ?? 0)} subtitle="Salidas del periodo actual" icon="expense" />
       </section>
 
       <section>
@@ -104,7 +87,7 @@ export default function DashboardPage() {
 
           <div className="space-y-3">
             {transactions.map((tx) => {
-              const isIngreso = tx.type.toLowerCase() === "ingreso" || tx.type.toLowerCase() === "income";
+              const isIngreso = tx.type === "ingreso" || tx.type === "income";
               return (
                 <div key={tx.id} className="flex flex-col gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
                   <div>
@@ -146,8 +129,8 @@ export default function DashboardPage() {
             </Link>
             <div className="rounded-xl bg-slate-50 px-4 py-4">
               <p className="text-sm text-slate-500">Balance del mes</p>
-              <p className={`mt-1 text-2xl font-semibold ${metrics.balance >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                {fmt(metrics.balance)}
+              <p className={`mt-1 text-2xl font-semibold ${(currentMonth?.balance ?? 0) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
+                {fmt(currentMonth?.balance ?? 0)}
               </p>
             </div>
           </div>

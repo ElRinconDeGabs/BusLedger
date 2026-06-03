@@ -1,23 +1,22 @@
 import { prisma } from "@/lib/prisma";
 import bcrypt from "bcryptjs";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import jwt from "jsonwebtoken";
+import { AUTH_COOKIE, checkRateLimit } from "@/lib/server/getAuth";
 
-const AUTH_COOKIE = "auth_token";
+export async function POST(req: NextRequest) {
+  const limited = checkRateLimit(req);
+  if (limited) return limited;
 
-export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
     const user = await prisma.user.findUnique({ where: { email } });
+    const passwordMatch = user ? await bcrypt.compare(password, user.password) : false;
 
-    if (!user) {
-      return NextResponse.json({ error: "Usuario no encontrado" }, { status: 401 });
-    }
-
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return NextResponse.json({ error: "Password incorrecto" }, { status: 401 });
+    // Same error for both cases to prevent user enumeration
+    if (!user || !passwordMatch) {
+      return NextResponse.json({ error: "Credenciales incorrectas" }, { status: 401 });
     }
 
     if (!process.env.JWT_SECRET) {
@@ -26,10 +25,7 @@ export async function POST(req: Request) {
 
     const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: "1h" });
 
-    const response = NextResponse.json({
-      message: "Login correcto",
-      userId: user.id,
-    });
+    const response = NextResponse.json({ message: "Login correcto", userId: user.id });
 
     response.cookies.set(AUTH_COOKIE, token, {
       httpOnly: true,

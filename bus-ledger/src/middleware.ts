@@ -5,10 +5,10 @@ const AUTH_COOKIE = "auth_token";
 
 export function middleware(req: NextRequest) {
   const token = req.cookies.get(AUTH_COOKIE)?.value;
-  const isDashboard = req.nextUrl.pathname.startsWith("/dashboard");
-  const isAuthPage = req.nextUrl.pathname.startsWith("/login") || req.nextUrl.pathname.startsWith("/register");
+  const { pathname } = req.nextUrl;
+  const isAuthPage = pathname.startsWith("/login") || pathname.startsWith("/register");
 
-  if (isDashboard && !token) {
+  if (!isAuthPage && !token) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
 
@@ -20,5 +20,13 @@ export function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/login", "/register"],
+  matcher: [
+    "/dashboard/:path*",
+    "/busitos/:path*",
+    "/transacciones/:path*",
+    "/reportes/:path*",
+    "/configuracion/:path*",
+    "/login",
+    "/register",
+  ],
 };
