@@ -7,48 +7,39 @@ import DashboardShell from "@/components/dashboard/dashboard-shell";
 import StatsCard from "@/components/dashboard/stats-card";
 import { formatMoney } from "@/lib/display-settings";
 import { useDisplaySettings } from "@/lib/use-display-settings";
+import { ui } from "@/lib/ui";
 
 type Transaction = {
-  id: number;
-  amount: number;
-  description: string;
-  type: "INGRESO" | "GASTO";
-  date: string;
+  id: number; amount: number; description: string;
+  type: "INGRESO" | "GASTO"; date: string;
   busito?: { id: number; name: string };
 };
-
 type MonthlySummary = { month: string; ingresos: number; egresos: number; balance: number };
 
 export default function DashboardPage() {
   const settings = useDisplaySettings();
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [busitoCount, setBusitoCount] = useState(0);
-  const [currentMonth, setCurrentMonth] = useState<MonthlySummary | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [txs, setTxs]             = useState<Transaction[]>([]);
+  const [busitoCount, setBusCnt]   = useState(0);
+  const [currentMonth, setCurrent] = useState<MonthlySummary | null>(null);
+  const [loading, setLoading]      = useState(true);
 
-  useEffect(() => { void bootstrap(); }, []);
+  useEffect(() => { void load(); }, []);
 
-  const bootstrap = async () => {
+  const load = async () => {
     try {
-      const [busitosRes, txRes, summaryRes] = await Promise.all([
+      const [busRes, txRes, sumRes] = await Promise.all([
         fetch("/api/busitos"),
         fetch("/api/transactions?limit=8"),
         fetch("/api/dashboard/summary"),
       ]);
-      if (busitosRes.ok) {
-        const data = await busitosRes.json() as unknown[];
-        setBusitoCount(data.length);
+      if (busRes.ok) setBusCnt(((await busRes.json()) as unknown[]).length);
+      if (txRes.ok) setTxs((await txRes.json()) as Transaction[]);
+      if (sumRes.ok) {
+        const { monthly } = (await sumRes.json()) as { monthly: MonthlySummary[] };
+        const key = `${new Date().getFullYear()}-${String(new Date().getMonth() + 1).padStart(2, "0")}`;
+        setCurrent(monthly.find((m) => m.month === key) ?? null);
       }
-      if (txRes.ok) setTransactions((await txRes.json()) as Transaction[]);
-      if (summaryRes.ok) {
-        const summary = (await summaryRes.json()) as { monthly: MonthlySummary[] };
-        const now = new Date();
-        const key = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}`;
-        setCurrentMonth(summary.monthly.find((m) => m.month === key) ?? null);
-      }
-    } finally {
-      setLoading(false);
-    }
+    } finally { setLoading(false); }
   };
 
   const fmt = (n: number) => formatMoney(n, settings);
@@ -57,134 +48,87 @@ export default function DashboardPage() {
   return (
     <DashboardShell title="Dashboard" currentPath="/dashboard">
       {/* Stats */}
-      <section className="grid gap-3 grid-cols-2 xl:grid-cols-4">
-        <StatsCard
-          title="Busitos"
-          value={String(busitoCount)}
-          subtitle="Unidades registradas"
-          icon="bus"
-          variant="neutral"
-        />
-        <StatsCard
-          title="Ingresos del mes"
-          value={fmt(currentMonth?.ingresos ?? 0)}
-          subtitle="Entradas del período"
-          icon="income"
-          variant="success"
-        />
-        <StatsCard
-          title="Gastos del mes"
-          value={fmt(currentMonth?.egresos ?? 0)}
-          subtitle="Salidas del período"
-          icon="expense"
-          variant="danger"
-        />
+      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <StatsCard title="Busitos" value={String(busitoCount)} subtitle="Unidades" icon="bus" />
+        <StatsCard title="Ingresos del mes" value={fmt(currentMonth?.ingresos ?? 0)} icon="income" variant="success" />
+        <StatsCard title="Gastos del mes"   value={fmt(currentMonth?.egresos ?? 0)} icon="expense" variant="danger" />
         <StatsCard
           title="Balance del mes"
           value={fmt(balance)}
-          subtitle={balance >= 0 ? "Resultado positivo" : "Resultado negativo"}
+          subtitle={balance >= 0 ? "Positivo" : "Negativo"}
           icon="balance"
           variant={balance >= 0 ? "brand" : "danger"}
         />
-      </section>
+      </div>
 
       {/* Chart */}
-      <section>
-        <MainCharts />
-      </section>
+      <MainCharts />
 
-      {/* Bottom row */}
-      <section className="grid gap-5 xl:grid-cols-[1.4fr,1fr]">
+      {/* Bottom */}
+      <div className="grid gap-5 xl:grid-cols-[1fr,320px]">
         {/* Recent transactions */}
-        <div className="rounded-[10px] border border-border bg-surface p-5">
-          <div className="mb-4 flex items-center justify-between">
+        <div className={ui.card}>
+          <div className="flex items-center justify-between border-b border-border px-5 py-4">
             <div>
-              <h2 className="text-base font-semibold text-ink">Transacciones recientes</h2>
-              <p className="text-sm text-muted">Últimos 8 movimientos</p>
+              <h2 className="text-sm font-semibold text-ink">Transacciones recientes</h2>
+              <p className="text-xs text-muted">Últimos 8 movimientos</p>
             </div>
-            <Link href="/transacciones" className="text-sm font-medium text-brand-700 hover:text-brand-900">
-              Ver todas
+            <Link href="/transacciones" className="text-xs font-medium text-brand hover:text-brand-600">
+              Ver todas →
             </Link>
           </div>
 
-          <div className="space-y-2">
-            {transactions.map((tx) => (
-              <div
-                key={tx.id}
-                className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5"
-              >
+          <div className="divide-y divide-border">
+            {txs.map((tx) => (
+              <div key={tx.id} className="flex items-center justify-between gap-4 px-5 py-3">
                 <div className="min-w-0">
                   <p className="truncate text-sm font-medium text-ink">{tx.description}</p>
                   <p className="text-xs text-muted">
                     {tx.busito?.name ?? "—"} · {new Date(tx.date).toLocaleDateString("es-PA")}
                   </p>
                 </div>
-                <div className="shrink-0 text-right">
-                  <p className={`text-sm font-semibold tabular-nums ${tx.type === "INGRESO" ? "text-success-700" : "text-danger"}`}>
-                    {tx.type === "INGRESO" ? "+" : "−"}{fmt(Number(tx.amount))}
-                  </p>
-                  <p className="text-[11px] text-muted">{tx.type === "INGRESO" ? "Ingreso" : "Gasto"}</p>
-                </div>
+                <p className={`shrink-0 text-sm font-semibold tabular-nums ${tx.type === "INGRESO" ? "text-success-700" : "text-danger"}`}>
+                  {tx.type === "INGRESO" ? "+" : "−"}{fmt(tx.amount)}
+                </p>
               </div>
             ))}
-
-            {!loading && transactions.length === 0 && (
-              <div className="rounded-lg border border-dashed border-border bg-bg px-4 py-8 text-center text-sm text-muted">
-                Sin transacciones aún.{" "}
-                <Link href="/transacciones" className="font-medium text-brand-700">
-                  Registrar movimiento
-                </Link>
+            {!loading && txs.length === 0 && (
+              <div className="px-5 py-10 text-center text-sm text-muted">
+                Sin movimientos.{" "}
+                <Link href="/transacciones" className="font-medium text-brand">Registrar</Link>
               </div>
             )}
           </div>
         </div>
 
-        {/* Quick links */}
-        <div className="rounded-[10px] border border-border bg-surface p-5">
-          <h2 className="text-base font-semibold text-ink mb-4">Accesos rápidos</h2>
-
-          <div className="space-y-2">
-            <Link
-              href="/busitos"
-              className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-border-2 hover:bg-bg"
-            >
-              <div>
-                <p className="text-sm font-medium text-ink">Busitos</p>
-                <p className="text-xs text-muted">Gestionar unidades</p>
-              </div>
-              <svg viewBox="0 0 24 24" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </Link>
-
-            <Link
-              href="/transacciones"
-              className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-border-2 hover:bg-bg"
-            >
-              <div>
-                <p className="text-sm font-medium text-ink">Transacciones</p>
-                <p className="text-xs text-muted">Registrar ingresos y gastos</p>
-              </div>
-              <svg viewBox="0 0 24 24" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </Link>
-
-            <Link
-              href="/reportes"
-              className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-border-2 hover:bg-bg"
-            >
-              <div>
-                <p className="text-sm font-medium text-ink">Reportes</p>
-                <p className="text-xs text-muted">Análisis y gráficos</p>
-              </div>
-              <svg viewBox="0 0 24 24" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M9 18l6-6-6-6" />
-              </svg>
-            </Link>
+        {/* Quick actions */}
+        <div className={ui.card}>
+          <div className="border-b border-border px-5 py-4">
+            <h2 className="text-sm font-semibold text-ink">Accesos rápidos</h2>
+          </div>
+          <div className="divide-y divide-border">
+            {[
+              { href: "/busitos",       label: "Busitos",       desc: "Gestionar unidades" },
+              { href: "/transacciones", label: "Transacciones", desc: "Registrar movimientos" },
+              { href: "/reportes",      label: "Reportes",      desc: "Ver análisis" },
+            ].map((item) => (
+              <Link
+                key={item.href}
+                href={item.href}
+                className="flex items-center justify-between px-5 py-3.5 text-sm transition hover:bg-surface-2"
+              >
+                <div>
+                  <p className="font-medium text-ink">{item.label}</p>
+                  <p className="text-xs text-muted">{item.desc}</p>
+                </div>
+                <svg viewBox="0 0 16 16" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="1.8">
+                  <path d="M6 12l4-4-4-4" />
+                </svg>
+              </Link>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
     </DashboardShell>
   );
 }

@@ -12,93 +12,74 @@ type SidebarProps = {
   orgName?: string;
 };
 
-function IconGrid() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="3" width="7" height="7" rx="1.5" /><rect x="14" y="3" width="7" height="7" rx="1.5" />
-      <rect x="3" y="14" width="7" height="7" rx="1.5" /><rect x="14" y="14" width="7" height="7" rx="1.5" />
+const icons = {
+  dashboard: (
+    <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="2" width="7" height="7" rx="1.5" /><rect x="11" y="2" width="7" height="7" rx="1.5" />
+      <rect x="2" y="11" width="7" height="7" rx="1.5" /><rect x="11" y="11" width="7" height="7" rx="1.5" />
     </svg>
-  );
-}
-function IconBus() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="3" width="16" height="14" rx="3" /><path d="M7 17v3M17 17v3M4 10h16" />
-      <circle cx="8" cy="20.5" r="1" fill="currentColor" stroke="none" />
-      <circle cx="16" cy="20.5" r="1" fill="currentColor" stroke="none" />
+  ),
+  bus: (
+    <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="2.5" width="14" height="11" rx="2.5" /><path d="M6 13.5v3M14 13.5v3M3 8.5h14" />
+      <circle cx="6.5" cy="16.5" r="1" fill="currentColor" stroke="none" />
+      <circle cx="13.5" cy="16.5" r="1" fill="currentColor" stroke="none" />
     </svg>
-  );
-}
-function IconWallet() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="6" width="18" height="13" rx="2.5" /><path d="M16 12.5h5M7 6V4.5h9" />
-      <circle cx="16" cy="12.5" r="1.2" fill="currentColor" stroke="none" />
+  ),
+  wallet: (
+    <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="2" y="5" width="16" height="11" rx="2" /><path d="M14 10.5h4M6 5V3.5h8" />
+      <circle cx="14" cy="10.5" r="1.2" fill="currentColor" stroke="none" />
     </svg>
-  );
-}
-function IconChart() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M3 20h18M6 16V10M12 16V7M18 16V13" />
+  ),
+  chart: (
+    <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M2 17h16M5 13V9M10 13V6M15 13V11" />
     </svg>
-  );
-}
-function IconSettings() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="12" cy="12" r="3" />
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" />
+  ),
+  settings: (
+    <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="10" cy="10" r="2.5" />
+      <path d="M10 2v1.5M10 16.5V18M2 10h1.5M16.5 10H18M4.22 4.22l1.06 1.06M14.72 14.72l1.06 1.06M4.22 15.78l1.06-1.06M14.72 5.28l1.06-1.06" />
     </svg>
-  );
-}
-function IconShield() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2L4 6v6c0 5.25 3.5 9.74 8 11 4.5-1.26 8-5.75 8-11V6L12 2z" />
-      <path d="M9 12l2 2 4-4" />
+  ),
+  shield: (
+    <svg viewBox="0 0 20 20" className="h-[18px] w-[18px]" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M10 1.5L3 4.5v5c0 4.5 3 7.5 7 8.5 4-1 7-4 7-8.5v-5L10 1.5z" />
+      <path d="M7 10l2 2 4-4" />
     </svg>
-  );
-}
+  ),
+};
 
 const menuItems: MenuItem[] = [
-  { label: "Dashboard",      href: "/dashboard",     icon: <IconGrid /> },
-  { label: "Busitos",        href: "/busitos",        icon: <IconBus /> },
-  { label: "Transacciones",  href: "/transacciones",  icon: <IconWallet /> },
-  { label: "Reportes",       href: "/reportes",       icon: <IconChart /> },
-  { label: "Configuración",  href: "/configuracion",  icon: <IconSettings /> },
+  { label: "Dashboard",     href: "/dashboard",    icon: icons.dashboard },
+  { label: "Busitos",       href: "/busitos",       icon: icons.bus },
+  { label: "Transacciones", href: "/transacciones", icon: icons.wallet },
+  { label: "Reportes",      href: "/reportes",      icon: icons.chart },
+  { label: "Configuración", href: "/configuracion", icon: icons.settings },
 ];
 
 const adminItems: MenuItem[] = [
-  { label: "Administración", href: "/admin", icon: <IconShield /> },
+  { label: "Administración", href: "/admin", icon: icons.shield },
 ];
 
-function NavItem({
-  item,
-  active,
-  collapsed,
-  onClose,
-}: {
-  item: MenuItem;
-  active: boolean;
-  collapsed: boolean;
-  onClose: () => void;
-}) {
+function NavItem({ item, active, collapsed, onClose }: { item: MenuItem; active: boolean; collapsed: boolean; onClose: () => void }) {
   return (
     <Link
       href={item.href}
       title={collapsed ? item.label : undefined}
       onClick={onClose}
-      style={{
-        backgroundColor: active ? "var(--sb-active-bg)" : "transparent",
-        color: active ? "var(--sb-active-text)" : "var(--sb-text)",
-      }}
-      className={`flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:opacity-90 ${
-        collapsed ? "justify-center" : "gap-3"
-      } ${!active ? "hover:bg-[var(--sb-hover)]" : ""}`}
+      className={`
+        flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors
+        ${collapsed ? "justify-center px-2" : ""}
+        ${active
+          ? "bg-brand-50 text-brand-600"
+          : "text-muted hover:bg-surface-2 hover:text-ink"
+        }
+      `}
     >
-      <span className="shrink-0">{item.icon}</span>
-      {!collapsed && <span className="truncate">{item.label}</span>}
+      <span className={`shrink-0 ${active ? "text-brand-600" : ""}`}>{item.icon}</span>
+      {!collapsed && <span>{item.label}</span>}
     </Link>
   );
 }
@@ -111,78 +92,53 @@ export default function Sidebar({ open, collapsed, onClose, currentPath, role, o
     <>
       {open && (
         <div
-          className="fixed inset-0 z-20 md:hidden"
-          style={{ background: "oklch(0.13 0.025 255 / 0.5)" }}
+          className="fixed inset-0 z-20 bg-ink/30 backdrop-blur-[2px] md:hidden"
           onClick={onClose}
         />
       )}
 
       <aside
-        style={{ background: "var(--sb-bg)", borderRight: "1px solid var(--sb-border)" }}
-        className={`fixed left-0 top-0 z-30 flex h-screen flex-col py-4 transition-all duration-200 md:sticky md:translate-x-0 ${
-          collapsed ? "md:w-[68px]" : "w-[220px] md:w-[220px]"
-        } ${open ? "translate-x-0" : "-translate-x-full"}`}
+        className={`
+          fixed left-0 top-0 z-30 flex h-screen flex-col border-r border-border bg-surface
+          transition-all duration-200
+          md:sticky md:translate-x-0
+          ${collapsed ? "md:w-[64px]" : "w-[240px] md:w-[240px]"}
+          ${open ? "translate-x-0" : "-translate-x-full"}
+        `}
       >
         {/* Logo */}
-        <div className={`mb-6 flex items-center px-3 ${collapsed ? "justify-center" : "gap-3"}`}>
-          <div
-            style={{ background: "var(--sb-logo-bg)", color: "var(--sb-active-text)" }}
-            className="grid h-9 w-9 shrink-0 place-items-center rounded-lg text-sm font-bold"
-          >
+        <div className={`flex h-14 items-center border-b border-border px-4 ${collapsed ? "justify-center px-0" : "gap-2.5"}`}>
+          <div className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-brand text-[13px] font-bold text-white">
             BL
           </div>
           {!collapsed && (
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold" style={{ color: "oklch(0.95 0.005 255)" }}>
-                Bus Ledger
-              </p>
-              <p className="truncate text-xs" style={{ color: "var(--sb-muted)" }}>
-                {orgName ?? "Cargando..."}
-              </p>
+              <p className="truncate text-sm font-semibold text-ink">Bus Ledger</p>
+              <p className="truncate text-xs text-muted">{orgName ?? ""}</p>
             </div>
           )}
         </div>
 
-        {/* Main nav */}
-        <nav className="flex flex-col gap-0.5 px-2">
+        {/* Nav */}
+        <nav className="flex flex-col gap-0.5 overflow-y-auto p-3 flex-1">
           {menuItems.map((item) => (
-            <NavItem
-              key={item.href}
-              item={item}
-              active={isActive(item.href)}
-              collapsed={collapsed}
-              onClose={onClose}
-            />
+            <NavItem key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} onClose={onClose} />
           ))}
+
+          {role === "ADMIN" && (
+            <>
+              <div className="my-2 border-t border-border" />
+              {adminItems.map((item) => (
+                <NavItem key={item.href} item={item} active={isActive(item.href)} collapsed={collapsed} onClose={onClose} />
+              ))}
+            </>
+          )}
         </nav>
 
-        {/* Admin section */}
-        {role === "ADMIN" && (
-          <>
-            <div
-              className="mx-3 my-4"
-              style={{ borderTop: "1px solid var(--sb-border)" }}
-            />
-            <nav className="flex flex-col gap-0.5 px-2">
-              {adminItems.map((item) => (
-                <NavItem
-                  key={item.href}
-                  item={item}
-                  active={isActive(item.href)}
-                  collapsed={collapsed}
-                  onClose={onClose}
-                />
-              ))}
-            </nav>
-          </>
-        )}
-
-        {/* Bottom org name (expanded only) */}
-        {!collapsed && (
-          <div className="mt-auto px-4 pb-1">
-            <p className="truncate text-[11px]" style={{ color: "var(--sb-muted)" }}>
-              {orgName}
-            </p>
+        {/* Footer org label */}
+        {!collapsed && orgName && (
+          <div className="border-t border-border px-4 py-3">
+            <p className="truncate text-[11px] text-faint">{orgName}</p>
           </div>
         )}
       </aside>

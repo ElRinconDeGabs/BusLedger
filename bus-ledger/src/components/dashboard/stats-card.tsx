@@ -1,4 +1,4 @@
-type Variant = "neutral" | "success" | "danger" | "brand";
+type Variant = "default" | "success" | "danger" | "brand" | "warning";
 
 type StatsCardProps = {
   title: string;
@@ -8,77 +8,56 @@ type StatsCardProps = {
   variant?: Variant;
 };
 
-const variantStyles: Record<Variant, { card: string; icon: string; label: string; value: string }> = {
-  neutral: {
-    card:  "border-border bg-surface",
-    icon:  "bg-bg text-muted",
-    label: "text-muted",
-    value: "text-ink",
-  },
-  success: {
-    card:  "border-success-100 bg-success-50",
-    icon:  "bg-success-100 text-success-700",
-    label: "text-success-700",
-    value: "text-success-700",
-  },
-  danger: {
-    card:  "border-danger-100 bg-danger-50",
-    icon:  "bg-danger-100 text-danger-700",
-    label: "text-danger-700",
-    value: "text-danger-700",
-  },
-  brand: {
-    card:  "border-brand-200 bg-brand-50",
-    icon:  "bg-brand-100 text-brand-700",
-    label: "text-brand-700",
-    value: "text-brand-700",
-  },
+const styles: Record<Variant, { wrap: string; iconWrap: string; title: string; value: string }> = {
+  default:  { wrap: "bg-surface border-border",     iconWrap: "bg-surface-2 text-muted",       title: "text-muted",       value: "text-ink" },
+  success:  { wrap: "bg-success-50 border-success-100", iconWrap: "bg-success-100 text-success-700", title: "text-success-700", value: "text-success-700" },
+  danger:   { wrap: "bg-danger-50 border-danger-100",   iconWrap: "bg-danger-100 text-danger-700",   title: "text-danger-700",  value: "text-danger-700" },
+  brand:    { wrap: "bg-brand-50 border-brand-200",     iconWrap: "bg-brand-100 text-brand-700",     title: "text-brand-700",   value: "text-brand-600" },
+  warning:  { wrap: "bg-warning-50 border-warning-100", iconWrap: "bg-warning-100 text-warning-700", title: "text-warning-700", value: "text-warning-700" },
 };
 
 function Icon({ name }: { name: StatsCardProps["icon"] }) {
+  const cls = "h-5 w-5";
+  const s = { fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
   if (name === "bus") return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="4" y="3" width="16" height="14" rx="3" /><path d="M7 17v3M17 17v3M4 10h16" />
-      <circle cx="8" cy="20.5" r="1" fill="currentColor" stroke="none" />
-      <circle cx="16" cy="20.5" r="1" fill="currentColor" stroke="none" />
+    <svg viewBox="0 0 20 20" className={cls} {...s}>
+      <rect x="3" y="2.5" width="14" height="11" rx="2.5" /><path d="M6 13.5v3M14 13.5v3M3 8.5h14" />
+      <circle cx="6.5" cy="16.5" r="1" fill="currentColor" stroke="none" /><circle cx="13.5" cy="16.5" r="1" fill="currentColor" stroke="none" />
     </svg>
   );
   if (name === "income") return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 20V4M6 10l6-6 6 6" />
+    <svg viewBox="0 0 20 20" className={cls} {...s}>
+      <path d="M10 17V4M5 9l5-5 5 5" />
     </svg>
   );
   if (name === "expense") return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 4v16M18 14l-6 6-6-6" />
+    <svg viewBox="0 0 20 20" className={cls} {...s}>
+      <path d="M10 4v13M15 12l-5 5-5-5" />
     </svg>
   );
   if (name === "balance") return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+    <svg viewBox="0 0 20 20" className={cls} {...s}>
+      <path d="M10 2v16M14 5H8.5a3 3 0 0 0 0 6h3a3 3 0 0 1 0 6H5" />
     </svg>
   );
   return (
-    <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <rect x="3" y="4" width="18" height="16" rx="2" /><path d="M7 8h10M7 12h10M7 16h5" />
+    <svg viewBox="0 0 20 20" className={cls} {...s}>
+      <rect x="2" y="3" width="16" height="14" rx="2" /><path d="M6 7h8M6 10h8M6 13h4" />
     </svg>
   );
 }
 
-export default function StatsCard({ title, value, subtitle, icon, variant = "neutral" }: StatsCardProps) {
-  const s = variantStyles[variant];
-
+export default function StatsCard({ title, value, subtitle, icon, variant = "default" }: StatsCardProps) {
+  const s = styles[variant];
   return (
-    <article className={`rounded-[10px] border p-4 ${s.card}`}>
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className={`text-xs font-medium ${s.label}`}>{title}</p>
-          <p className={`mt-1.5 text-2xl font-bold leading-none tabular-nums ${s.value}`}>{value}</p>
-          {subtitle && <p className={`mt-1 text-xs ${s.label} opacity-80`}>{subtitle}</p>}
-        </div>
-        <div className={`shrink-0 rounded-lg p-2 ${s.icon}`}>
-          <Icon name={icon} />
-        </div>
+    <article className={`flex items-start justify-between gap-4 rounded-lg border p-4 ${s.wrap}`}>
+      <div className="min-w-0">
+        <p className={`text-xs font-medium ${s.title}`}>{title}</p>
+        <p className={`mt-1.5 text-2xl font-bold tabular-nums leading-none ${s.value}`}>{value}</p>
+        {subtitle && <p className={`mt-1 text-xs ${s.title} opacity-75`}>{subtitle}</p>}
+      </div>
+      <div className={`shrink-0 rounded-lg p-2.5 ${s.iconWrap}`}>
+        <Icon name={icon} />
       </div>
     </article>
   );

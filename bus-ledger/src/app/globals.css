@@ -1,52 +1,48 @@
 @import "tailwindcss";
 
 @theme {
-  /* Brand - Amber (amber / school bus energy) */
-  --color-brand:     oklch(0.73 0.18 58);
-  --color-brand-50:  oklch(0.97 0.04 58);
-  --color-brand-100: oklch(0.93 0.09 58);
-  --color-brand-200: oklch(0.87 0.13 58);
-  --color-brand-700: oklch(0.50 0.17 58);
-  --color-brand-900: oklch(0.30 0.12 58);
+  /* Brand — indigo (financiero, confiable) */
+  --color-brand:     oklch(0.50 0.24 264);
+  --color-brand-50:  oklch(0.97 0.02 264);
+  --color-brand-100: oklch(0.93 0.06 264);
+  --color-brand-200: oklch(0.86 0.11 264);
+  --color-brand-600: oklch(0.46 0.22 264);
+  --color-brand-700: oklch(0.38 0.20 264);
 
-  /* Neutrals - blue-tinted slate (NOT cream/sand) */
-  --color-bg:        oklch(0.97 0.006 255);
+  /* Fondos */
+  --color-bg:        oklch(0.985 0.002 255);
   --color-surface:   oklch(1 0 0);
-  --color-border:    oklch(0.91 0.008 255);
-  --color-border-2:  oklch(0.85 0.01 255);
+  --color-surface-2: oklch(0.975 0.002 255);
 
-  /* Text */
-  --color-ink:       oklch(0.14 0.02 255);
-  --color-muted:     oklch(0.50 0.02 255);
-  --color-faint:     oklch(0.72 0.01 255);
+  /* Bordes */
+  --color-border:    oklch(0.91 0.004 255);
+  --color-border-2:  oklch(0.84 0.006 255);
 
-  /* Semantic - income */
-  --color-success:     oklch(0.60 0.18 150);
-  --color-success-50:  oklch(0.97 0.04 150);
-  --color-success-100: oklch(0.92 0.08 150);
-  --color-success-700: oklch(0.40 0.17 150);
+  /* Texto */
+  --color-ink:       oklch(0.14 0.015 255);
+  --color-muted:     oklch(0.50 0.012 255);
+  --color-faint:     oklch(0.72 0.007 255);
 
-  /* Semantic - expense */
-  --color-danger:     oklch(0.55 0.22 25);
-  --color-danger-50:  oklch(0.97 0.04 25);
-  --color-danger-100: oklch(0.92 0.09 25);
-  --color-danger-700: oklch(0.38 0.20 25);
+  /* Ingresos */
+  --color-success:     oklch(0.58 0.18 150);
+  --color-success-50:  oklch(0.97 0.03 150);
+  --color-success-100: oklch(0.92 0.07 150);
+  --color-success-700: oklch(0.40 0.16 150);
 
-  /* Fonts */
+  /* Gastos */
+  --color-danger:     oklch(0.55 0.20 25);
+  --color-danger-50:  oklch(0.97 0.03 25);
+  --color-danger-100: oklch(0.92 0.08 25);
+  --color-danger-700: oklch(0.38 0.18 25);
+
+  /* Warning */
+  --color-warning:     oklch(0.72 0.18 70);
+  --color-warning-50:  oklch(0.97 0.04 70);
+  --color-warning-100: oklch(0.93 0.09 70);
+  --color-warning-700: oklch(0.52 0.16 70);
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
-
-/* Sidebar tokens (not Tailwind utilities - used directly in component) */
-:root {
-  --sb-bg:          oklch(0.13 0.025 255);
-  --sb-hover:       oklch(0.20 0.025 255);
-  --sb-active-bg:   oklch(0.73 0.18 58);
-  --sb-active-text: oklch(0.13 0.025 255);
-  --sb-text:        oklch(0.78 0.012 255);
-  --sb-muted:       oklch(0.46 0.018 255);
-  --sb-border:      oklch(0.23 0.022 255);
-  --sb-logo-bg:     oklch(0.73 0.18 58);
 }
 
 body {
@@ -54,21 +50,19 @@ body {
   color: var(--color-ink);
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* Scrollbar */
-::-webkit-scrollbar        { width: 5px; height: 5px; }
-::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: oklch(0.82 0.008 255); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: oklch(0.66 0.012 255); }
-
-/* Focus ring - amber */
 *:focus-visible {
-  outline: 2px solid oklch(0.73 0.18 58);
+  outline: 2px solid var(--color-brand);
   outline-offset: 2px;
 }
 
-/* Motion safety */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: oklch(0.84 0.006 255); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: oklch(0.70 0.008 255); }
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
