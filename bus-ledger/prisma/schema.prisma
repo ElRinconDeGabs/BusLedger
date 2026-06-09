@@ -12,6 +12,17 @@ enum Role {
   USER
 }
 
+enum TransactionType {
+  INGRESO
+  GASTO
+}
+
+enum BusitoStatus {
+  ACTIVO
+  INACTIVO
+  EN_MANTENIMIENTO
+}
+
 model Organization {
   id        Int      @id @default(autoincrement())
   name      String
@@ -28,6 +39,8 @@ model User {
   role           Role          @default(USER)
   organizationId Int
   organization   Organization  @relation(fields: [organizationId], references: [id])
+  locale         String        @default("es-PA")
+  currency       String        @default("USD")
   createdAt      DateTime      @default(now())
   busitos        Busito[]
   transactions   Transaction[]
@@ -41,6 +54,7 @@ model Busito {
   capacity       Int?
   model          String?
   year           Int?
+  status         BusitoStatus  @default(ACTIVO)
   userId         Int
   organizationId Int
   user           User          @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -51,13 +65,15 @@ model Busito {
 }
 
 model Transaction {
-  id          Int      @id @default(autoincrement())
+  id          Int             @id @default(autoincrement())
   amount      Float
   description String
-  type        String
-  createdAt   DateTime @default(now())
+  type        TransactionType
+  category    String?
+  date        DateTime        @default(now())
+  createdAt   DateTime        @default(now())
   userId      Int
-  user        User     @relation(fields: [userId], references: [id])
+  user        User            @relation(fields: [userId], references: [id])
   busitoId    Int
-  busito      Busito   @relation(fields: [busitoId], references: [id], onDelete: Cascade)
+  busito      Busito          @relation(fields: [busitoId], references: [id], onDelete: Cascade)
 }

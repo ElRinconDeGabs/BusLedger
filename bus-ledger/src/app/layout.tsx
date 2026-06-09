@@ -14,19 +14,15 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "BusLedger",
-  description: "Una aplicacion para llevar el control de gastos de tu busito, con analitica y reportes personalizados.",
+  description: "Control de gastos e ingresos para flotas de busitos. Analítica y reportes en tiempo real.",
 };
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="es">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>
     </html>

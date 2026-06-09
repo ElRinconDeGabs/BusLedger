@@ -19,6 +19,8 @@ export async function GET(req: NextRequest) {
         email: true,
         role: true,
         organizationId: true,
+        locale: true,
+        currency: true,
         organization: { select: { name: true } },
       },
     });
@@ -32,6 +34,8 @@ export async function GET(req: NextRequest) {
       role: user.role,
       organizationId: user.organizationId,
       organizationName: user.organization.name,
+      locale: user.locale,
+      currency: user.currency,
     });
   } catch {
     return NextResponse.json({ error: "Token inválido" }, { status: 401 });

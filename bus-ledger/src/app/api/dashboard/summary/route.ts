@@ -2,11 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserContext } from "@/lib/server/getAuth";
 
-function isIngreso(type: string) {
-  const t = type.toLowerCase();
-  return t === "ingreso" || t === "income";
-}
-
 export async function GET(req: NextRequest) {
   const ctx = getUserContext(req);
   if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
@@ -19,8 +14,8 @@ export async function GET(req: NextRequest) {
 
     const txs = await prisma.transaction.findMany({
       where,
-      select: { amount: true, type: true, createdAt: true },
-      orderBy: { createdAt: "asc" },
+      select: { amount: true, type: true, date: true },
+      orderBy: { date: "asc" },
     });
 
     const monthlyMap = new Map<string, { month: string; ingresos: number; egresos: number; balance: number }>();
@@ -28,11 +23,11 @@ export async function GET(req: NextRequest) {
     let totalEgresos = 0;
 
     for (const tx of txs) {
-      const key = `${tx.createdAt.getFullYear()}-${String(tx.createdAt.getMonth() + 1).padStart(2, "0")}`;
+      const key = `${tx.date.getFullYear()}-${String(tx.date.getMonth() + 1).padStart(2, "0")}`;
       if (!monthlyMap.has(key)) monthlyMap.set(key, { month: key, ingresos: 0, egresos: 0, balance: 0 });
 
       const row = monthlyMap.get(key)!;
-      if (isIngreso(tx.type)) {
+      if (tx.type === "INGRESO") {
         row.ingresos += tx.amount;
         totalIngresos += tx.amount;
       } else {

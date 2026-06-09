@@ -12,41 +12,34 @@ type Transaction = {
   id: number;
   amount: number;
   description: string;
-  type: string;
-  createdAt: string;
+  type: "INGRESO" | "GASTO";
+  date: string;
   busito?: { id: number; name: string };
 };
 
-type Busito = { id: number };
-
-type MonthlySummary = {
-  month: string;
-  ingresos: number;
-  egresos: number;
-  balance: number;
-};
+type MonthlySummary = { month: string; ingresos: number; egresos: number; balance: number };
 
 export default function DashboardPage() {
   const settings = useDisplaySettings();
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [busitos, setBusitos] = useState<Busito[]>([]);
+  const [busitoCount, setBusitoCount] = useState(0);
   const [currentMonth, setCurrentMonth] = useState<MonthlySummary | null>(null);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    void bootstrap();
-  }, []);
+  useEffect(() => { void bootstrap(); }, []);
 
   const bootstrap = async () => {
     try {
-      const [busitosRes, transactionsRes, summaryRes] = await Promise.all([
+      const [busitosRes, txRes, summaryRes] = await Promise.all([
         fetch("/api/busitos"),
         fetch("/api/transactions?limit=8"),
         fetch("/api/dashboard/summary"),
       ]);
-
-      if (busitosRes.ok) setBusitos((await busitosRes.json()) as Busito[]);
-      if (transactionsRes.ok) setTransactions((await transactionsRes.json()) as Transaction[]);
+      if (busitosRes.ok) {
+        const data = await busitosRes.json() as unknown[];
+        setBusitoCount(data.length);
+      }
+      if (txRes.ok) setTransactions((await txRes.json()) as Transaction[]);
       if (summaryRes.ok) {
         const summary = (await summaryRes.json()) as { monthly: MonthlySummary[] };
         const now = new Date();
@@ -59,82 +52,138 @@ export default function DashboardPage() {
   };
 
   const fmt = (n: number) => formatMoney(n, settings);
+  const balance = currentMonth?.balance ?? 0;
 
   return (
     <DashboardShell title="Dashboard" currentPath="/dashboard">
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <StatsCard title="Total de Busitos" value={String(busitos.length)} subtitle="Unidades registradas" icon="bus" />
-        <StatsCard title="Movimientos Recientes" value={String(transactions.length)} subtitle="Ultimas transacciones" icon="transactions" />
-        <StatsCard title="Ingresos del Mes" value={fmt(currentMonth?.ingresos ?? 0)} subtitle="Entradas del periodo actual" icon="income" />
-        <StatsCard title="Gastos del Mes" value={fmt(currentMonth?.egresos ?? 0)} subtitle="Salidas del periodo actual" icon="expense" />
+      {/* Stats */}
+      <section className="grid gap-3 grid-cols-2 xl:grid-cols-4">
+        <StatsCard
+          title="Busitos"
+          value={String(busitoCount)}
+          subtitle="Unidades registradas"
+          icon="bus"
+          variant="neutral"
+        />
+        <StatsCard
+          title="Ingresos del mes"
+          value={fmt(currentMonth?.ingresos ?? 0)}
+          subtitle="Entradas del período"
+          icon="income"
+          variant="success"
+        />
+        <StatsCard
+          title="Gastos del mes"
+          value={fmt(currentMonth?.egresos ?? 0)}
+          subtitle="Salidas del período"
+          icon="expense"
+          variant="danger"
+        />
+        <StatsCard
+          title="Balance del mes"
+          value={fmt(balance)}
+          subtitle={balance >= 0 ? "Resultado positivo" : "Resultado negativo"}
+          icon="balance"
+          variant={balance >= 0 ? "brand" : "danger"}
+        />
       </section>
 
+      {/* Chart */}
       <section>
         <MainCharts />
       </section>
 
-      <section className="grid gap-6 xl:grid-cols-[1.4fr,1fr]">
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {/* Bottom row */}
+      <section className="grid gap-5 xl:grid-cols-[1.4fr,1fr]">
+        {/* Recent transactions */}
+        <div className="rounded-[10px] border border-border bg-surface p-5">
+          <div className="mb-4 flex items-center justify-between">
             <div>
-              <h2 className="text-lg font-semibold text-slate-900">Transacciones recientes</h2>
-              <p className="text-sm text-slate-500">Resumen rapido del movimiento mas reciente</p>
+              <h2 className="text-base font-semibold text-ink">Transacciones recientes</h2>
+              <p className="text-sm text-muted">Últimos 8 movimientos</p>
             </div>
-            <Link href="/transacciones" className="text-sm font-medium text-blue-600 hover:text-blue-700">
+            <Link href="/transacciones" className="text-sm font-medium text-brand-700 hover:text-brand-900">
               Ver todas
             </Link>
           </div>
 
-          <div className="space-y-3">
-            {transactions.map((tx) => {
-              const isIngreso = tx.type === "ingreso" || tx.type === "income";
-              return (
-                <div key={tx.id} className="flex flex-col gap-3 rounded-xl border border-slate-200 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
-                  <div>
-                    <p className="font-medium text-slate-900">{tx.description}</p>
-                    <p className="text-xs text-slate-500">
-                      {tx.busito?.name || "Sin busito"} · {new Date(tx.createdAt).toLocaleDateString(settings.locale)}
-                    </p>
-                  </div>
-                  <div className="text-left sm:text-right">
-                    <p className={`font-semibold ${isIngreso ? "text-emerald-600" : "text-rose-600"}`}>
-                      {isIngreso ? "+" : "-"}{fmt(Number(tx.amount))}
-                    </p>
-                    <p className="text-xs text-slate-500">{isIngreso ? "Ingreso" : "Gasto"}</p>
-                  </div>
+          <div className="space-y-2">
+            {transactions.map((tx) => (
+              <div
+                key={tx.id}
+                className="flex items-center justify-between gap-3 rounded-lg border border-border px-3 py-2.5"
+              >
+                <div className="min-w-0">
+                  <p className="truncate text-sm font-medium text-ink">{tx.description}</p>
+                  <p className="text-xs text-muted">
+                    {tx.busito?.name ?? "—"} · {new Date(tx.date).toLocaleDateString("es-PA")}
+                  </p>
                 </div>
-              );
-            })}
+                <div className="shrink-0 text-right">
+                  <p className={`text-sm font-semibold tabular-nums ${tx.type === "INGRESO" ? "text-success-700" : "text-danger"}`}>
+                    {tx.type === "INGRESO" ? "+" : "−"}{fmt(Number(tx.amount))}
+                  </p>
+                  <p className="text-[11px] text-muted">{tx.type === "INGRESO" ? "Ingreso" : "Gasto"}</p>
+                </div>
+              </div>
+            ))}
 
             {!loading && transactions.length === 0 && (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-slate-50 p-6 text-sm text-slate-500">
-                No hay transacciones recientes.
+              <div className="rounded-lg border border-dashed border-border bg-bg px-4 py-8 text-center text-sm text-muted">
+                Sin transacciones aún.{" "}
+                <Link href="/transacciones" className="font-medium text-brand-700">
+                  Registrar movimiento
+                </Link>
               </div>
             )}
           </div>
-        </article>
+        </div>
 
-        <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="text-lg font-semibold text-slate-900">Accesos rapidos</h2>
-          <p className="mt-1 text-sm text-slate-500">Administra cada modulo desde su propia seccion.</p>
+        {/* Quick links */}
+        <div className="rounded-[10px] border border-border bg-surface p-5">
+          <h2 className="text-base font-semibold text-ink mb-4">Accesos rápidos</h2>
 
-          <div className="mt-5 space-y-3">
-            <Link href="/busitos" className="block rounded-xl border border-slate-200 px-4 py-3 hover:bg-slate-50">
-              <p className="font-medium text-slate-900">Busitos</p>
-              <p className="text-sm text-slate-500">Crear, editar y revisar unidades.</p>
+          <div className="space-y-2">
+            <Link
+              href="/busitos"
+              className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-border-2 hover:bg-bg"
+            >
+              <div>
+                <p className="text-sm font-medium text-ink">Busitos</p>
+                <p className="text-xs text-muted">Gestionar unidades</p>
+              </div>
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
             </Link>
-            <Link href="/transacciones" className="block rounded-xl border border-slate-200 px-4 py-3 hover:bg-slate-50">
-              <p className="font-medium text-slate-900">Transacciones</p>
-              <p className="text-sm text-slate-500">Registrar ingresos y gastos por busito.</p>
+
+            <Link
+              href="/transacciones"
+              className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-border-2 hover:bg-bg"
+            >
+              <div>
+                <p className="text-sm font-medium text-ink">Transacciones</p>
+                <p className="text-xs text-muted">Registrar ingresos y gastos</p>
+              </div>
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
             </Link>
-            <div className="rounded-xl bg-slate-50 px-4 py-4">
-              <p className="text-sm text-slate-500">Balance del mes</p>
-              <p className={`mt-1 text-2xl font-semibold ${(currentMonth?.balance ?? 0) >= 0 ? "text-emerald-600" : "text-rose-600"}`}>
-                {fmt(currentMonth?.balance ?? 0)}
-              </p>
-            </div>
+
+            <Link
+              href="/reportes"
+              className="flex items-center justify-between rounded-lg border border-border px-4 py-3 transition hover:border-border-2 hover:bg-bg"
+            >
+              <div>
+                <p className="text-sm font-medium text-ink">Reportes</p>
+                <p className="text-xs text-muted">Análisis y gráficos</p>
+              </div>
+              <svg viewBox="0 0 24 24" className="h-4 w-4 text-faint" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M9 18l6-6-6-6" />
+              </svg>
+            </Link>
           </div>
-        </article>
+        </div>
       </section>
     </DashboardShell>
   );

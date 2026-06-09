@@ -1,129 +1,104 @@
-"use client"
+"use client";
 
-import { JSX, useState } from "react"
-import { useRouter } from "next/navigation"
-import { login } from "@/services/authService"
-import Link from "next/link"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { login } from "@/services/authService";
+import Link from "next/link";
 
-export default function LoginPage(): JSX.Element {
-
-  const router = useRouter()
-
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [error, setError] = useState<string | null>(null)
-  const [loading, setLoading] = useState(false)
+export default function LoginPage() {
+  const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-
-    e.preventDefault()
-    setError(null)
-    setLoading(true)
-
+    e.preventDefault();
+    setError(null);
+    setLoading(true);
     try {
-
-      const user = await login({ email, password })
-
-      // Save user session logic should be implemented in client-compatible way
-      localStorage.setItem("user", JSON.stringify(user))
-
-      router.replace("/dashboard")
-
-    } catch (err: any) {
-
-      setError(err.message || "Error al iniciar sesión")
-
+      await login({ email, password });
+      router.replace("/dashboard");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error al iniciar sesión");
     } finally {
-
-      setLoading(false)
-
+      setLoading(false);
     }
-
-  }
+  };
 
   return (
-
-    <main className="flex min-h-[100svh] items-center justify-center bg-gray-100 px-3 py-4 text-gray-800 sm:px-6 sm:py-6">
-
-      <div className="w-[min(94vw,34rem)] rounded-2xl border border-slate-200 bg-white p-5 shadow-sm sm:p-8">
-
-        <h1 className="flex justify-center pb-1 text-2xl font-semibold text-slate-900">
-          Iniciar Sesión
-        </h1>
-
-        <form onSubmit={handleSubmit} className="mt-5 space-y-3" noValidate>
-
-          <div className="relative">
-            <input
-              id="login-email"
-              type="email"
-              placeholder="Ej: usuario@correo.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              autoComplete="email"
-              inputMode="email"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              required
-              className="peer w-full rounded-xl border border-slate-200 px-3 pb-2.5 pt-5 outline-none ring-blue-100 transition placeholder:opacity-0 focus:border-blue-500 focus:ring-2 focus:placeholder:opacity-100"
-            />
-            <label
-              htmlFor="login-email"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 bg-white px-1 text-sm text-slate-500 transition-all peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-blue-700 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-xs"
-            >
-              Correo electronico
-            </label>
+    <main className="flex min-h-[100svh] items-center justify-center bg-bg px-4 py-6">
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-brand text-base font-bold text-brand-900 mb-3">
+            BL
           </div>
+          <h1 className="text-2xl font-bold text-ink">Iniciar sesión</h1>
+          <p className="mt-1 text-sm text-muted">Accede a tu panel de control</p>
+        </div>
 
-          <div className="relative">
-            <input
-              id="login-password"
-              type="password"
-              placeholder="Ej: minimo 8 caracteres"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              autoComplete="current-password"
-              autoCapitalize="none"
-              autoCorrect="off"
-              spellCheck={false}
-              required
-              className="peer w-full rounded-xl border border-slate-200 px-3 pb-2.5 pt-5 outline-none ring-blue-100 transition placeholder:opacity-0 focus:border-blue-500 focus:ring-2 focus:placeholder:opacity-100"
-            />
-            <label
-              htmlFor="login-password"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 bg-white px-1 text-sm text-slate-500 transition-all peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-blue-700 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-xs"
-            >
-              Contraseña
-            </label>
-          </div>
-
-          {error && (
-            <div className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">
-              {error}
+        <div className="rounded-[10px] border border-border bg-surface p-6">
+          <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-ink mb-1.5">
+                Correo electrónico
+              </label>
+              <input
+                id="email"
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="tu@correo.com"
+                autoComplete="email"
+                inputMode="email"
+                autoCapitalize="none"
+                autoCorrect="off"
+                spellCheck={false}
+                required
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-faint outline-none transition focus:border-brand focus:ring-2 focus:ring-brand-100"
+              />
             </div>
-          )}
 
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {loading ? "Ingresando..." : "Ingresar"}
-          </button>
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-ink mb-1.5">
+                Contraseña
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                autoComplete="current-password"
+                required
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-faint outline-none transition focus:border-brand focus:ring-2 focus:ring-brand-100"
+              />
+            </div>
 
-        </form>
+            {error && (
+              <div className="rounded-lg border border-danger-100 bg-danger-50 px-3 py-2.5 text-sm text-danger">
+                {error}
+              </div>
+            )}
 
-        <p className="mt-4 text-center text-sm text-slate-600">
-          No tienes cuenta?{" "}
-          <Link href="/register" className="font-semibold text-blue-700 hover:text-blue-800">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {loading ? "Ingresando..." : "Ingresar"}
+            </button>
+          </form>
+        </div>
+
+        <p className="mt-5 text-center text-sm text-muted">
+          ¿No tienes cuenta?{" "}
+          <Link href="/register" className="font-semibold text-brand-700 hover:text-brand-900">
             Crear cuenta
           </Link>
         </p>
-
       </div>
-
     </main>
-
-  )
+  );
 }

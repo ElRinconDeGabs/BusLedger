@@ -758,6 +758,8 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   organizationId: 'organizationId',
+  locale: 'locale',
+  currency: 'currency',
   createdAt: 'createdAt'
 } as const
 
@@ -772,6 +774,7 @@ export const BusitoScalarFieldEnum = {
   capacity: 'capacity',
   model: 'model',
   year: 'year',
+  status: 'status',
   userId: 'userId',
   organizationId: 'organizationId',
   createdAt: 'createdAt',
@@ -786,6 +789,8 @@ export const TransactionScalarFieldEnum = {
   amount: 'amount',
   description: 'description',
   type: 'type',
+  category: 'category',
+  date: 'date',
   createdAt: 'createdAt',
   userId: 'userId',
   busitoId: 'busitoId'
@@ -881,6 +886,20 @@ export type ListEnumRoleFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'BusitoStatus'
+ */
+export type EnumBusitoStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BusitoStatus'>
+    
+
+
+/**
+ * Reference to a field of type 'BusitoStatus[]'
+ */
+export type ListEnumBusitoStatusFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'BusitoStatus[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -891,6 +910,20 @@ export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, '
  * Reference to a field of type 'Float[]'
  */
 export type ListFloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float[]'>
+    
+
+
+/**
+ * Reference to a field of type 'TransactionType'
+ */
+export type EnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType'>
+    
+
+
+/**
+ * Reference to a field of type 'TransactionType[]'
+ */
+export type ListEnumTransactionTypeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'TransactionType[]'>
     
 
 /**

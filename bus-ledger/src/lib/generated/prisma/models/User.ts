@@ -43,6 +43,8 @@ export type UserMinAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   organizationId: number | null
+  locale: string | null
+  currency: string | null
   createdAt: Date | null
 }
 
@@ -53,6 +55,8 @@ export type UserMaxAggregateOutputType = {
   password: string | null
   role: $Enums.Role | null
   organizationId: number | null
+  locale: string | null
+  currency: string | null
   createdAt: Date | null
 }
 
@@ -63,6 +67,8 @@ export type UserCountAggregateOutputType = {
   password: number
   role: number
   organizationId: number
+  locale: number
+  currency: number
   createdAt: number
   _all: number
 }
@@ -85,6 +91,8 @@ export type UserMinAggregateInputType = {
   password?: true
   role?: true
   organizationId?: true
+  locale?: true
+  currency?: true
   createdAt?: true
 }
 
@@ -95,6 +103,8 @@ export type UserMaxAggregateInputType = {
   password?: true
   role?: true
   organizationId?: true
+  locale?: true
+  currency?: true
   createdAt?: true
 }
 
@@ -105,6 +115,8 @@ export type UserCountAggregateInputType = {
   password?: true
   role?: true
   organizationId?: true
+  locale?: true
+  currency?: true
   createdAt?: true
   _all?: true
 }
@@ -202,6 +214,8 @@ export type UserGroupByOutputType = {
   password: string
   role: $Enums.Role
   organizationId: number
+  locale: string
+  currency: string
   createdAt: Date
   _count: UserCountAggregateOutputType | null
   _avg: UserAvgAggregateOutputType | null
@@ -235,6 +249,8 @@ export type UserWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   organizationId?: Prisma.IntFilter<"User"> | number
+  locale?: Prisma.StringFilter<"User"> | string
+  currency?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   busitos?: Prisma.BusitoListRelationFilter
@@ -248,6 +264,8 @@ export type UserOrderByWithRelationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locale?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   organization?: Prisma.OrganizationOrderByWithRelationInput
   busitos?: Prisma.BusitoOrderByRelationAggregateInput
@@ -264,6 +282,8 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   organizationId?: Prisma.IntFilter<"User"> | number
+  locale?: Prisma.StringFilter<"User"> | string
+  currency?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
   organization?: Prisma.XOR<Prisma.OrganizationScalarRelationFilter, Prisma.OrganizationWhereInput>
   busitos?: Prisma.BusitoListRelationFilter
@@ -277,6 +297,8 @@ export type UserOrderByWithAggregationInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locale?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   _count?: Prisma.UserCountOrderByAggregateInput
   _avg?: Prisma.UserAvgOrderByAggregateInput
@@ -295,6 +317,8 @@ export type UserScalarWhereWithAggregatesInput = {
   password?: Prisma.StringWithAggregatesFilter<"User"> | string
   role?: Prisma.EnumRoleWithAggregatesFilter<"User"> | $Enums.Role
   organizationId?: Prisma.IntWithAggregatesFilter<"User"> | number
+  locale?: Prisma.StringWithAggregatesFilter<"User"> | string
+  currency?: Prisma.StringWithAggregatesFilter<"User"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"User"> | Date | string
 }
 
@@ -303,6 +327,8 @@ export type UserCreateInput = {
   email: string
   password: string
   role?: $Enums.Role
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutUsersInput
   busitos?: Prisma.BusitoCreateNestedManyWithoutUserInput
@@ -316,6 +342,8 @@ export type UserUncheckedCreateInput = {
   password: string
   role?: $Enums.Role
   organizationId: number
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   busitos?: Prisma.BusitoUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -326,6 +354,8 @@ export type UserUpdateInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutUsersNestedInput
   busitos?: Prisma.BusitoUpdateManyWithoutUserNestedInput
@@ -339,6 +369,8 @@ export type UserUncheckedUpdateInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   organizationId?: Prisma.IntFieldUpdateOperationsInput | number
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   busitos?: Prisma.BusitoUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -351,6 +383,8 @@ export type UserCreateManyInput = {
   password: string
   role?: $Enums.Role
   organizationId: number
+  locale?: string
+  currency?: string
   createdAt?: Date | string
 }
 
@@ -359,6 +393,8 @@ export type UserUpdateManyMutationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -369,6 +405,8 @@ export type UserUncheckedUpdateManyInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   organizationId?: Prisma.IntFieldUpdateOperationsInput | number
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -389,6 +427,8 @@ export type UserCountOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locale?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -404,6 +444,8 @@ export type UserMaxOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locale?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -414,6 +456,8 @@ export type UserMinOrderByAggregateInput = {
   password?: Prisma.SortOrder
   role?: Prisma.SortOrder
   organizationId?: Prisma.SortOrder
+  locale?: Prisma.SortOrder
+  currency?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
 }
 
@@ -506,6 +550,8 @@ export type UserCreateWithoutOrganizationInput = {
   email: string
   password: string
   role?: $Enums.Role
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   busitos?: Prisma.BusitoCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -517,6 +563,8 @@ export type UserUncheckedCreateWithoutOrganizationInput = {
   email: string
   password: string
   role?: $Enums.Role
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   busitos?: Prisma.BusitoUncheckedCreateNestedManyWithoutUserInput
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
@@ -558,6 +606,8 @@ export type UserScalarWhereInput = {
   password?: Prisma.StringFilter<"User"> | string
   role?: Prisma.EnumRoleFilter<"User"> | $Enums.Role
   organizationId?: Prisma.IntFilter<"User"> | number
+  locale?: Prisma.StringFilter<"User"> | string
+  currency?: Prisma.StringFilter<"User"> | string
   createdAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
 
@@ -566,6 +616,8 @@ export type UserCreateWithoutBusitosInput = {
   email: string
   password: string
   role?: $Enums.Role
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutUsersInput
   transactions?: Prisma.TransactionCreateNestedManyWithoutUserInput
@@ -578,6 +630,8 @@ export type UserUncheckedCreateWithoutBusitosInput = {
   password: string
   role?: $Enums.Role
   organizationId: number
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   transactions?: Prisma.TransactionUncheckedCreateNestedManyWithoutUserInput
 }
@@ -603,6 +657,8 @@ export type UserUpdateWithoutBusitosInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutUsersNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -615,6 +671,8 @@ export type UserUncheckedUpdateWithoutBusitosInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   organizationId?: Prisma.IntFieldUpdateOperationsInput | number
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -624,6 +682,8 @@ export type UserCreateWithoutTransactionsInput = {
   email: string
   password: string
   role?: $Enums.Role
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   organization: Prisma.OrganizationCreateNestedOneWithoutUsersInput
   busitos?: Prisma.BusitoCreateNestedManyWithoutUserInput
@@ -636,6 +696,8 @@ export type UserUncheckedCreateWithoutTransactionsInput = {
   password: string
   role?: $Enums.Role
   organizationId: number
+  locale?: string
+  currency?: string
   createdAt?: Date | string
   busitos?: Prisma.BusitoUncheckedCreateNestedManyWithoutUserInput
 }
@@ -661,6 +723,8 @@ export type UserUpdateWithoutTransactionsInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   organization?: Prisma.OrganizationUpdateOneRequiredWithoutUsersNestedInput
   busitos?: Prisma.BusitoUpdateManyWithoutUserNestedInput
@@ -673,6 +737,8 @@ export type UserUncheckedUpdateWithoutTransactionsInput = {
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
   organizationId?: Prisma.IntFieldUpdateOperationsInput | number
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   busitos?: Prisma.BusitoUncheckedUpdateManyWithoutUserNestedInput
 }
@@ -683,6 +749,8 @@ export type UserCreateManyOrganizationInput = {
   email: string
   password: string
   role?: $Enums.Role
+  locale?: string
+  currency?: string
   createdAt?: Date | string
 }
 
@@ -691,6 +759,8 @@ export type UserUpdateWithoutOrganizationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   busitos?: Prisma.BusitoUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUpdateManyWithoutUserNestedInput
@@ -702,6 +772,8 @@ export type UserUncheckedUpdateWithoutOrganizationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   busitos?: Prisma.BusitoUncheckedUpdateManyWithoutUserNestedInput
   transactions?: Prisma.TransactionUncheckedUpdateManyWithoutUserNestedInput
@@ -713,6 +785,8 @@ export type UserUncheckedUpdateManyWithoutOrganizationInput = {
   email?: Prisma.StringFieldUpdateOperationsInput | string
   password?: Prisma.StringFieldUpdateOperationsInput | string
   role?: Prisma.EnumRoleFieldUpdateOperationsInput | $Enums.Role
+  locale?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
@@ -763,6 +837,8 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   password?: boolean
   role?: boolean
   organizationId?: boolean
+  locale?: boolean
+  currency?: boolean
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   busitos?: boolean | Prisma.User$busitosArgs<ExtArgs>
@@ -777,6 +853,8 @@ export type UserSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   organizationId?: boolean
+  locale?: boolean
+  currency?: boolean
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -788,6 +866,8 @@ export type UserSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensio
   password?: boolean
   role?: boolean
   organizationId?: boolean
+  locale?: boolean
+  currency?: boolean
   createdAt?: boolean
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
@@ -799,10 +879,12 @@ export type UserSelectScalar = {
   password?: boolean
   role?: boolean
   organizationId?: boolean
+  locale?: boolean
+  currency?: boolean
   createdAt?: boolean
 }
 
-export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "organizationId" | "createdAt", ExtArgs["result"]["user"]>
+export type UserOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "email" | "password" | "role" | "organizationId" | "locale" | "currency" | "createdAt", ExtArgs["result"]["user"]>
 export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   organization?: boolean | Prisma.OrganizationDefaultArgs<ExtArgs>
   busitos?: boolean | Prisma.User$busitosArgs<ExtArgs>
@@ -830,6 +912,8 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     password: string
     role: $Enums.Role
     organizationId: number
+    locale: string
+    currency: string
     createdAt: Date
   }, ExtArgs["result"]["user"]>
   composites: {}
@@ -1263,6 +1347,8 @@ export interface UserFieldRefs {
   readonly password: Prisma.FieldRef<"User", 'String'>
   readonly role: Prisma.FieldRef<"User", 'Role'>
   readonly organizationId: Prisma.FieldRef<"User", 'Int'>
+  readonly locale: Prisma.FieldRef<"User", 'String'>
+  readonly currency: Prisma.FieldRef<"User", 'String'>
   readonly createdAt: Prisma.FieldRef<"User", 'DateTime'>
 }
     

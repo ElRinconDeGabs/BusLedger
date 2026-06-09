@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getUserContext } from "@/lib/server/getAuth";
 
+const VALID_STATUS = new Set(["ACTIVO", "INACTIVO", "EN_MANTENIMIENTO"]);
+
 export async function GET(req: NextRequest) {
   const ctx = getUserContext(req);
   if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
@@ -32,18 +34,27 @@ export async function POST(req: NextRequest) {
   if (!ctx) return NextResponse.json({ error: "No autenticado" }, { status: 401 });
 
   try {
-    const { name, description, plateNumber, capacity, model, year } = await req.json();
+    const body = await req.json() as Record<string, unknown>;
+    const { name, description, plateNumber, capacity, model, year, status } = body;
 
-    if (!name) return NextResponse.json({ error: "El nombre es requerido" }, { status: 400 });
+    if (!name || String(name).trim().length < 1) {
+      return NextResponse.json({ error: "El nombre es requerido" }, { status: 400 });
+    }
+
+    const rawStatus = status ? String(status).toUpperCase() : "ACTIVO";
+    if (!VALID_STATUS.has(rawStatus)) {
+      return NextResponse.json({ error: "Estado inválido" }, { status: 400 });
+    }
 
     const busito = await prisma.busito.create({
       data: {
-        name,
-        description: description ?? null,
-        plateNumber: plateNumber?.trim() ? plateNumber.trim() : null,
+        name: String(name).trim(),
+        description: description ? String(description).trim() : null,
+        plateNumber: plateNumber ? String(plateNumber).trim() : null,
         capacity: capacity ? parseInt(String(capacity), 10) : null,
-        model: model ?? null,
+        model: model ? String(model).trim() : null,
         year: year ? parseInt(String(year), 10) : null,
+        status: rawStatus as "ACTIVO" | "INACTIVO" | "EN_MANTENIMIENTO",
         userId: ctx.userId,
         organizationId: ctx.organizationId,
       },

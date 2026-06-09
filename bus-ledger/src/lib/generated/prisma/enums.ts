@@ -15,3 +15,20 @@ export const Role = {
 } as const
 
 export type Role = (typeof Role)[keyof typeof Role]
+
+
+export const TransactionType = {
+  INGRESO: 'INGRESO',
+  GASTO: 'GASTO'
+} as const
+
+export type TransactionType = (typeof TransactionType)[keyof typeof TransactionType]
+
+
+export const BusitoStatus = {
+  ACTIVO: 'ACTIVO',
+  INACTIVO: 'INACTIVO',
+  EN_MANTENIMIENTO: 'EN_MANTENIMIENTO'
+} as const
+
+export type BusitoStatus = (typeof BusitoStatus)[keyof typeof BusitoStatus]

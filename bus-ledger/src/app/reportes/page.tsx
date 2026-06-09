@@ -12,7 +12,7 @@ import {
 type MonthlySummary = { month: string; ingresos: number; egresos: number; balance: number };
 type Summary = { totals: { ingresos: number; egresos: number; balance: number }; monthly: MonthlySummary[] };
 type Transaction = {
-  id: number; amount: number; description: string; type: string; createdAt: string;
+  id: number; amount: number; type: "INGRESO" | "GASTO";
   busito?: { id: number; name: string };
 };
 type BusitoStat = { id: number; name: string; ingresos: number; egresos: number; balance: number; count: number };
@@ -24,6 +24,12 @@ const PERIODS = [
   { label: "Todo", months: 0 },
 ];
 
+const CHART_COLORS = {
+  ingreso: "oklch(0.60 0.18 150)",
+  gasto:   "oklch(0.55 0.22 25)",
+  balance: "oklch(0.73 0.18 58)",
+};
+
 export default function ReportesPage() {
   const settings = useDisplaySettings();
   const [summary, setSummary] = useState<Summary | null>(null);
@@ -32,7 +38,6 @@ export default function ReportesPage() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => { setMounted(true); }, []);
-
   useEffect(() => {
     void Promise.all([
       fetch("/api/dashboard/summary").then((r) => r.json()).then(setSummary).catch(() => null),
@@ -46,7 +51,7 @@ export default function ReportesPage() {
     if (!summary) return [];
     const data = summary.monthly.map((m) => {
       const [y, mo] = m.month.split("-");
-      return { ...m, label: new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString("es-DO", { month: "short", year: "2-digit" }) };
+      return { ...m, label: new Date(Number(y), Number(mo) - 1, 1).toLocaleDateString("es-PA", { month: "short", year: "2-digit" }) };
     });
     return period === 0 ? data : data.slice(-period);
   }, [summary, period]);
@@ -63,7 +68,7 @@ export default function ReportesPage() {
       const { id, name } = tx.busito;
       if (!map.has(id)) map.set(id, { id, name, ingresos: 0, egresos: 0, balance: 0, count: 0 });
       const s = map.get(id)!;
-      if (tx.type === "ingreso" || tx.type === "income") s.ingresos += tx.amount; else s.egresos += tx.amount;
+      if (tx.type === "INGRESO") s.ingresos += tx.amount; else s.egresos += tx.amount;
       s.balance = s.ingresos - s.egresos;
       s.count++;
     }
@@ -77,108 +82,129 @@ export default function ReportesPage() {
 
   const periodBalance = periodTotals.ingresos - periodTotals.egresos;
 
+  const chartTooltipStyle = {
+    borderRadius: "8px",
+    border: "1px solid oklch(0.91 0.008 255)",
+    boxShadow: "0 4px 16px oklch(0.14 0.02 255 / 0.08)",
+    fontSize: "12px",
+  };
+
   return (
     <DashboardShell title="Reportes" currentPath="/reportes">
+      {/* Period selector */}
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-sm font-medium text-slate-600">Periodo:</span>
+        <span className="text-sm text-muted">Período:</span>
         {PERIODS.map((p) => (
-          <button key={p.months} onClick={() => setPeriod(p.months)}
-            className={`rounded-full px-3 py-1.5 text-xs font-semibold transition ${
-              period === p.months ? "bg-blue-600 text-white shadow-sm" : "border border-slate-200 bg-white text-slate-600 hover:bg-slate-50"
-            }`}>
+          <button
+            key={p.months}
+            onClick={() => setPeriod(p.months)}
+            className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition ${
+              period === p.months
+                ? "bg-brand text-brand-900"
+                : "border border-border text-muted hover:text-ink hover:border-border-2"
+            }`}
+          >
             {p.label}
           </button>
         ))}
       </div>
 
-      <section className="grid gap-4 sm:grid-cols-3">
-        <article className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Ingresos del periodo</p>
-          <p className="mt-2 text-2xl font-bold text-emerald-900">{fmt(periodTotals.ingresos)}</p>
-          {summary && period > 0 && <p className="mt-1 text-xs text-emerald-600">Total general: {fmt(summary.totals.ingresos)}</p>}
-        </article>
-        <article className="rounded-2xl border border-rose-200 bg-rose-50 p-5 shadow-sm">
-          <p className="text-xs font-semibold uppercase tracking-wide text-rose-700">Egresos del periodo</p>
-          <p className="mt-2 text-2xl font-bold text-rose-900">{fmt(periodTotals.egresos)}</p>
-          {summary && period > 0 && <p className="mt-1 text-xs text-rose-600">Total general: {fmt(summary.totals.egresos)}</p>}
-        </article>
-        <article className={`rounded-2xl border p-5 shadow-sm ${periodBalance >= 0 ? "border-cyan-200 bg-cyan-50" : "border-orange-200 bg-orange-50"}`}>
-          <p className={`text-xs font-semibold uppercase tracking-wide ${periodBalance >= 0 ? "text-cyan-700" : "text-orange-700"}`}>Balance del periodo</p>
-          <p className={`mt-2 text-2xl font-bold ${periodBalance >= 0 ? "text-cyan-900" : "text-orange-900"}`}>{fmt(periodBalance)}</p>
-        </article>
-      </section>
-
-      <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">Ingresos vs Egresos por mes</h2>
-        <div className="h-72">
-          {mounted && filteredMonthly.length > 0 ? (
-            <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={filteredMonthly} barGap={8}>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#e8edf2" />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-                <YAxis width={55} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={(v: number) => fmt(v)} />
-                <Tooltip formatter={(v) => fmt(Number(v))} contentStyle={{ borderRadius: "12px", border: "1px solid #dbe4ee" }} />
-                <Legend wrapperStyle={{ paddingTop: 12 }} iconType="circle" />
-                <Bar dataKey="ingresos" name="Ingresos" fill="#059669" radius={[8, 8, 0, 0]} />
-                <Bar dataKey="egresos" name="Egresos" fill="#e11d48" radius={[8, 8, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          ) : (
-            <div className="flex h-full items-center justify-center rounded-xl border border-dashed border-slate-200 bg-slate-50 text-sm text-slate-400">
-              {!mounted ? "Cargando gráfico..." : "Sin datos para el periodo seleccionado."}
-            </div>
+      {/* Summary stats */}
+      <section className="grid gap-3 sm:grid-cols-3">
+        <div className="rounded-[10px] border border-success-100 bg-success-50 p-4">
+          <p className="text-xs text-success-700">Ingresos del período</p>
+          <p className="mt-1.5 text-2xl font-bold tabular-nums text-success-700">{fmt(periodTotals.ingresos)}</p>
+          {summary && period > 0 && (
+            <p className="mt-1 text-xs text-success-700 opacity-70">Total general: {fmt(summary.totals.ingresos)}</p>
           )}
+        </div>
+        <div className="rounded-[10px] border border-danger-100 bg-danger-50 p-4">
+          <p className="text-xs text-danger">Egresos del período</p>
+          <p className="mt-1.5 text-2xl font-bold tabular-nums text-danger">{fmt(periodTotals.egresos)}</p>
+          {summary && period > 0 && (
+            <p className="mt-1 text-xs text-danger opacity-70">Total general: {fmt(summary.totals.egresos)}</p>
+          )}
+        </div>
+        <div className={`rounded-[10px] p-4 ${periodBalance >= 0 ? "border border-brand-200 bg-brand-50" : "border border-danger-100 bg-danger-50"}`}>
+          <p className={`text-xs ${periodBalance >= 0 ? "text-brand-700" : "text-danger"}`}>Balance del período</p>
+          <p className={`mt-1.5 text-2xl font-bold tabular-nums ${periodBalance >= 0 ? "text-brand-700" : "text-danger"}`}>{fmt(periodBalance)}</p>
         </div>
       </section>
 
+      {/* Bar chart */}
+      <div className="rounded-[10px] border border-border bg-surface p-5">
+        <h2 className="text-sm font-semibold text-ink mb-4">Ingresos vs Egresos por mes</h2>
+        <div className="h-72">
+          {mounted && filteredMonthly.length > 0 ? (
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={filteredMonthly} barGap={6} barCategoryGap="28%">
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.91 0.008 255)" />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "oklch(0.50 0.02 255)" }} axisLine={false} tickLine={false} />
+                <YAxis width={56} tick={{ fontSize: 11, fill: "oklch(0.50 0.02 255)" }} axisLine={false} tickLine={false} tickFormatter={(v: number) => fmt(v)} />
+                <Tooltip formatter={(v) => fmt(Number(v))} contentStyle={chartTooltipStyle} />
+                <Legend wrapperStyle={{ paddingTop: 12, fontSize: 12 }} iconType="circle" iconSize={8} />
+                <Bar dataKey="ingresos" name="Ingresos" fill={CHART_COLORS.ingreso} radius={[5, 5, 0, 0]} />
+                <Bar dataKey="egresos"  name="Egresos"  fill={CHART_COLORS.gasto}   radius={[5, 5, 0, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex h-full items-center justify-center rounded-lg border border-dashed border-border bg-bg text-sm text-muted">
+              {!mounted ? "Preparando gráfico..." : "Sin datos para el período."}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Balance line chart */}
       {mounted && balanceLine.length > 1 && (
-        <section className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-slate-900">Balance acumulado</h2>
-          <div className="h-56">
+        <div className="rounded-[10px] border border-border bg-surface p-5">
+          <h2 className="text-sm font-semibold text-ink mb-4">Balance acumulado</h2>
+          <div className="h-52">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={balanceLine}>
-                <CartesianGrid strokeDasharray="4 4" vertical={false} stroke="#e8edf2" />
-                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
-                <YAxis width={55} tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} tickFormatter={(v: number) => fmt(v)} />
-                <Tooltip formatter={(v) => fmt(Number(v))} contentStyle={{ borderRadius: "12px", border: "1px solid #dbe4ee" }} />
-                <Line type="monotone" dataKey="balanceAcumulado" name="Balance acumulado" stroke="#0ea5e9" strokeWidth={2.5} dot={false} />
+                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="oklch(0.91 0.008 255)" />
+                <XAxis dataKey="label" tick={{ fontSize: 11, fill: "oklch(0.50 0.02 255)" }} axisLine={false} tickLine={false} />
+                <YAxis width={56} tick={{ fontSize: 11, fill: "oklch(0.50 0.02 255)" }} axisLine={false} tickLine={false} tickFormatter={(v: number) => fmt(v)} />
+                <Tooltip formatter={(v) => fmt(Number(v))} contentStyle={chartTooltipStyle} />
+                <Line type="monotone" dataKey="balanceAcumulado" name="Balance acumulado" stroke={CHART_COLORS.balance} strokeWidth={2.5} dot={false} activeDot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </section>
+        </div>
       )}
 
+      {/* Busito performance table */}
       {busitoStats.length > 0 && (
-        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <div className="border-b border-slate-100 p-5">
-            <h2 className="text-lg font-semibold text-slate-900">Rendimiento por busito</h2>
-            <p className="text-sm text-slate-500">Ordenado por ingresos totales.</p>
+        <div className="rounded-[10px] border border-border bg-surface">
+          <div className="border-b border-border p-5">
+            <h2 className="text-sm font-semibold text-ink">Rendimiento por busito</h2>
+            <p className="text-xs text-muted mt-0.5">Ordenado por ingresos totales.</p>
           </div>
           <div className="overflow-x-auto">
             <table className="min-w-full text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs font-semibold uppercase tracking-wide text-slate-400">
-                  <th className="px-5 py-3">Busito</th>
-                  <th className="px-5 py-3">Ingresos</th>
-                  <th className="px-5 py-3">Egresos</th>
-                  <th className="px-5 py-3">Balance</th>
-                  <th className="px-5 py-3">Movimientos</th>
+                <tr className="border-b border-border text-left">
+                  <th className="px-5 py-3 text-xs font-semibold text-muted">Busito</th>
+                  <th className="px-5 py-3 text-xs font-semibold text-muted">Ingresos</th>
+                  <th className="px-5 py-3 text-xs font-semibold text-muted">Egresos</th>
+                  <th className="px-5 py-3 text-xs font-semibold text-muted">Balance</th>
+                  <th className="px-5 py-3 text-xs font-semibold text-muted">Movimientos</th>
                 </tr>
               </thead>
               <tbody>
-                {busitoStats.map((b, i) => (
-                  <tr key={b.id} className={`border-b border-slate-50 ${i % 2 ? "bg-slate-50/50" : ""}`}>
-                    <td className="px-5 py-3.5 font-medium text-slate-900">{b.name}</td>
-                    <td className="px-5 py-3.5 font-semibold text-emerald-600">{fmt(b.ingresos)}</td>
-                    <td className="px-5 py-3.5 font-semibold text-rose-600">{fmt(b.egresos)}</td>
-                    <td className={`px-5 py-3.5 font-semibold ${b.balance >= 0 ? "text-cyan-700" : "text-orange-700"}`}>{fmt(b.balance)}</td>
-                    <td className="px-5 py-3.5 text-slate-600">{b.count}</td>
+                {busitoStats.map((b) => (
+                  <tr key={b.id} className="border-b border-border hover:bg-bg transition-colors">
+                    <td className="px-5 py-3 font-medium text-ink">{b.name}</td>
+                    <td className="px-5 py-3 font-semibold tabular-nums text-success-700">{fmt(b.ingresos)}</td>
+                    <td className="px-5 py-3 font-semibold tabular-nums text-danger">{fmt(b.egresos)}</td>
+                    <td className={`px-5 py-3 font-semibold tabular-nums ${b.balance >= 0 ? "text-brand-700" : "text-danger"}`}>{fmt(b.balance)}</td>
+                    <td className="px-5 py-3 text-muted">{b.count}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-        </section>
+        </div>
       )}
     </DashboardShell>
   );

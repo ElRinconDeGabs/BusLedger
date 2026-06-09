@@ -5,16 +5,19 @@ import { useRouter } from "next/navigation";
 import Sidebar from "@/components/dashboard/sidebar";
 import Topbar from "@/components/dashboard/topbar";
 import Toaster from "@/components/ui/toaster";
+import { saveDisplaySettings } from "@/lib/display-settings";
 
 const SIDEBAR_COLLAPSED_KEY = "busledger.sidebar-collapsed";
 
-type User = {
+export type AppUser = {
   id: number;
   name: string;
   email: string;
   role: "ADMIN" | "USER";
   organizationId: number;
   organizationName: string;
+  locale: string;
+  currency: string;
 };
 
 type DashboardShellProps = {
@@ -27,21 +30,21 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
   const router = useRouter();
   const [menuOpen, setMenuOpen] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<AppUser | null>(null);
 
   useEffect(() => {
     void fetchUser();
-    const savedState = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
-    if (savedState === "true") setSidebarCollapsed(true);
+    const saved = window.localStorage.getItem(SIDEBAR_COLLAPSED_KEY);
+    if (saved === "true") setSidebarCollapsed(true);
   }, []);
 
   const fetchUser = async () => {
     const res = await fetch("/api/me");
-    if (!res.ok) {
-      router.push("/login");
-      return;
-    }
-    setUser((await res.json()) as User);
+    if (!res.ok) { router.push("/login"); return; }
+    const data = (await res.json()) as AppUser;
+    setUser(data);
+    // Sync server preferences to localStorage so existing hooks work
+    saveDisplaySettings({ locale: data.locale, currency: data.currency });
   };
 
   const logout = async () => {
@@ -62,7 +65,7 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
   };
 
   return (
-    <div className="min-h-[100svh] overflow-x-hidden bg-gray-100 text-gray-800">
+    <div className="min-h-[100svh] overflow-x-hidden bg-bg text-ink">
       <div className="flex min-h-[100svh] w-full items-stretch">
         <Sidebar
           open={menuOpen}
@@ -80,7 +83,7 @@ export default function DashboardShell({ title, currentPath, children }: Dashboa
             onMenuClick={toggleSidebar}
             onLogout={logout}
           />
-          <main className="w-full min-w-0 space-y-6 p-3 sm:p-6">{children}</main>
+          <main className="w-full min-w-0 space-y-5 p-3 sm:p-5">{children}</main>
         </div>
       </div>
       <Toaster />

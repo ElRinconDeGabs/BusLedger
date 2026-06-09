@@ -4,7 +4,14 @@ import bcrypt from "bcryptjs";
 import { getUserContext } from "@/lib/server/getAuth";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-const PASSWORD_POLICY = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
+
+function validatePassword(pw: string): string | null {
+  if (pw.length < 8) return "La contraseña debe tener al menos 8 caracteres";
+  if (pw.length > 100) return "La contraseña no puede superar los 100 caracteres";
+  if (!/[A-Za-z]/.test(pw)) return "La contraseña debe contener al menos una letra";
+  if (!/[0-9]/.test(pw)) return "La contraseña debe contener al menos un número";
+  return null;
+}
 
 function requireAdmin(req: NextRequest) {
   const ctx = getUserContext(req);
@@ -43,28 +50,29 @@ export async function POST(req: NextRequest) {
   if (error) return error;
 
   try {
-    const { name, email, password, role } = await req.json();
+    const body = await req.json() as Record<string, unknown>;
+    const { name, email, password, role } = body;
 
     if (!name || !email || !password) {
-      return NextResponse.json({ error: "Nombre, email y contraseña son requeridos" }, { status: 400 });
+      return NextResponse.json({ error: "Nombre, correo y contraseña son requeridos" }, { status: 400 });
     }
 
-    if (!EMAIL_RE.test(String(email))) {
+    const emailStr = String(email).toLowerCase().trim();
+    if (!EMAIL_RE.test(emailStr)) {
       return NextResponse.json({ error: "Correo electrónico inválido" }, { status: 400 });
     }
 
-    if (!PASSWORD_POLICY.test(password)) {
-      return NextResponse.json({ error: "La contraseña debe tener 8-20 caracteres, letras y numeros" }, { status: 400 });
-    }
+    const pwError = validatePassword(String(password));
+    if (pwError) return NextResponse.json({ error: pwError }, { status: 400 });
 
-    const existing = await prisma.user.findUnique({ where: { email } });
-    if (existing) return NextResponse.json({ error: "Ya existe un usuario con ese email" }, { status: 400 });
+    const existing = await prisma.user.findUnique({ where: { email: emailStr } });
+    if (existing) return NextResponse.json({ error: "Ya existe un usuario con ese correo" }, { status: 400 });
 
     const user = await prisma.user.create({
       data: {
         name: String(name).trim(),
-        email: String(email).toLowerCase().trim(),
-        password: await bcrypt.hash(password, 10),
+        email: emailStr,
+        password: await bcrypt.hash(String(password), 10),
         organizationId: ctx!.organizationId,
         role: role === "ADMIN" ? "ADMIN" : "USER",
       },

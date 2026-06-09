@@ -1,5 +1,7 @@
 import Link from "next/link";
 
+type BusitoStatus = "ACTIVO" | "INACTIVO" | "EN_MANTENIMIENTO";
+
 type BusitoCardProps = {
   id: number;
   name: string;
@@ -8,48 +10,81 @@ type BusitoCardProps = {
   capacity?: number;
   model?: string;
   year?: number;
+  status?: BusitoStatus;
   createdAt: string;
   onDelete: (id: number) => Promise<void>;
 };
 
-export default function BusitoCard({ id, name, description, plateNumber, capacity, model, year, createdAt, onDelete }: BusitoCardProps) {
+const statusConfig: Record<BusitoStatus, { label: string; classes: string }> = {
+  ACTIVO:            { label: "Activo",          classes: "bg-success-100 text-success-700" },
+  INACTIVO:          { label: "Inactivo",         classes: "bg-bg text-muted" },
+  EN_MANTENIMIENTO:  { label: "En mantenimiento", classes: "bg-brand-100 text-brand-700" },
+};
+
+export default function BusitoCard({
+  id, name, description, plateNumber, capacity, model, year, status = "ACTIVO", createdAt, onDelete,
+}: BusitoCardProps) {
+  const cfg = statusConfig[status];
+
   return (
-    <article className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm transition hover:border-slate-300 hover:shadow-md">
-      <Link href={`/busitos/${id}`} className="block rounded-lg px-1 py-0.5 transition hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-blue-100">
-        <div className="flex items-start justify-between gap-2">
-          <div>
-            <h3 className="text-base font-semibold text-slate-900">{name}</h3>
-            <p className="mt-1 line-clamp-2 min-h-10 text-sm text-slate-500">{description || "Sin descripcion"}</p>
+    <article className="rounded-[10px] border border-border bg-surface flex flex-col transition-colors hover:border-border-2">
+      <Link href={`/busitos/${id}`} className="flex-1 p-4 block">
+        <div className="flex items-start justify-between gap-2 mb-3">
+          <h3 className="font-semibold text-ink leading-tight">{name}</h3>
+          <span className={`shrink-0 rounded px-2 py-0.5 text-[11px] font-semibold ${cfg.classes}`}>
+            {cfg.label}
+          </span>
+        </div>
+
+        {description && (
+          <p className="text-sm text-muted line-clamp-2 mb-3">{description}</p>
+        )}
+
+        {/* Badges */}
+        {(plateNumber || capacity || model || year) && (
+          <div className="flex flex-wrap gap-1.5">
+            {plateNumber && (
+              <span className="rounded bg-bg px-2 py-0.5 text-[11px] text-muted font-medium">
+                {plateNumber}
+              </span>
+            )}
+            {model && (
+              <span className="rounded bg-bg px-2 py-0.5 text-[11px] text-muted font-medium">
+                {model}
+              </span>
+            )}
+            {year && (
+              <span className="rounded bg-bg px-2 py-0.5 text-[11px] text-muted font-medium">
+                {year}
+              </span>
+            )}
+            {capacity && (
+              <span className="rounded bg-bg px-2 py-0.5 text-[11px] text-muted font-medium">
+                {capacity} pax
+              </span>
+            )}
           </div>
-          <span className="shrink-0 rounded-full border border-blue-200 bg-blue-50 px-2 py-0.5 text-[11px] font-medium text-blue-700">Movs.</span>
-        </div>
-
-        <div className="mt-2.5 flex items-center justify-between gap-3">
-          <p className="text-xs text-slate-400">Creado: {new Date(createdAt).toLocaleDateString()}</p>
-          <span className="text-xs font-medium text-slate-500">Ver detalle</span>
-        </div>
-
-        <div className="mt-2 flex flex-wrap gap-1.5 text-[11px] text-slate-500">
-          {plateNumber && <span className="rounded-md bg-slate-100 px-2 py-0.5">Placa: {plateNumber}</span>}
-          {capacity && <span className="rounded-md bg-slate-100 px-2 py-0.5">Cap: {capacity}</span>}
-          {model && <span className="rounded-md bg-slate-100 px-2 py-0.5">{model}</span>}
-          {year && <span className="rounded-md bg-slate-100 px-2 py-0.5">{year}</span>}
-        </div>
+        )}
       </Link>
 
-      <div className="mt-3 flex flex-wrap items-center gap-2">
-        <Link
-          href={`/busitos/${id}`}
-          className="rounded-md border border-blue-200 bg-blue-50 px-2.5 py-1.5 text-xs font-medium text-blue-700 transition hover:bg-blue-100"
-        >
-          Editar
-        </Link>
-        <button
-          onClick={() => onDelete(id)}
-          className="rounded-md border border-rose-200 bg-rose-50 px-2.5 py-1.5 text-xs font-medium text-rose-700 transition hover:bg-rose-100"
-        >
-          Eliminar
-        </button>
+      <div className="flex items-center justify-between gap-2 border-t border-border px-4 py-2.5">
+        <span className="text-xs text-faint">
+          {new Date(createdAt).toLocaleDateString("es-PA", { day: "2-digit", month: "short", year: "numeric" })}
+        </span>
+        <div className="flex gap-2">
+          <Link
+            href={`/busitos/${id}`}
+            className="rounded-md border border-border px-2.5 py-1 text-xs font-medium text-ink transition hover:border-border-2 hover:bg-bg"
+          >
+            Editar
+          </Link>
+          <button
+            onClick={() => void onDelete(id)}
+            className="rounded-md border border-danger-100 bg-danger-50 px-2.5 py-1 text-xs font-medium text-danger transition hover:bg-danger-100"
+          >
+            Eliminar
+          </button>
+        </div>
       </div>
     </article>
   );

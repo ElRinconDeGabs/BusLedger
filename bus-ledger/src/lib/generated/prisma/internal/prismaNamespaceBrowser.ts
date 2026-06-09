@@ -89,6 +89,8 @@ export const UserScalarFieldEnum = {
   password: 'password',
   role: 'role',
   organizationId: 'organizationId',
+  locale: 'locale',
+  currency: 'currency',
   createdAt: 'createdAt'
 } as const
 
@@ -103,6 +105,7 @@ export const BusitoScalarFieldEnum = {
   capacity: 'capacity',
   model: 'model',
   year: 'year',
+  status: 'status',
   userId: 'userId',
   organizationId: 'organizationId',
   createdAt: 'createdAt',
@@ -117,6 +120,8 @@ export const TransactionScalarFieldEnum = {
   amount: 'amount',
   description: 'description',
   type: 'type',
+  category: 'category',
+  date: 'date',
   createdAt: 'createdAt',
   userId: 'userId',
   busitoId: 'busitoId'

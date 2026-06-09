@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import { login } from "@/services/authService";
 import Link from "next/link";
 
-const PASSWORD_POLICY = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,20}$/;
-
 export default function RegisterPage() {
   const router = useRouter();
   const [formData, setFormData] = useState({ name: "", email: "", password: "" });
@@ -21,7 +19,6 @@ export default function RegisterPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError(null);
-    setLoading(true);
 
     const payload = {
       name: formData.name.trim(),
@@ -31,16 +28,10 @@ export default function RegisterPage() {
 
     if (!payload.name || !payload.email || !payload.password) {
       setError("Completa todos los campos.");
-      setLoading(false);
       return;
     }
 
-    if (!PASSWORD_POLICY.test(payload.password)) {
-      setError("La contraseña debe tener 8 a 20 caracteres, al menos una letra y un numero, sin caracteres especiales.");
-      setLoading(false);
-      return;
-    }
-
+    setLoading(true);
     try {
       const response = await fetch("/api/auth/register", {
         method: "POST",
@@ -49,7 +40,7 @@ export default function RegisterPage() {
       });
 
       if (!response.ok) {
-        const data = await response.json();
+        const data = await response.json() as { error?: string };
         throw new Error(data.error || "No se pudo crear la cuenta");
       }
 
@@ -59,51 +50,52 @@ export default function RegisterPage() {
       } catch {
         router.replace("/login");
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error inesperado");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <main className="min-h-dvh bg-gray-100 px-4 py-6 text-gray-800 sm:px-6 flex items-center justify-center">
-      <div className="mx-auto max-w-md">
-        <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm sm:p-8">
-          <h1 className="text-2xl font-semibold text-slate-900 justify-center flex padding-bottom-4">
-            Crear cuenta
-          </h1>
-          <p className="mt-1 text-sm text-slate-500 justify-center flex">
-            Solo tomará unos minutos.
-          </p>
+    <main className="flex min-h-[100svh] items-center justify-center bg-bg px-4 py-8">
+      <div className="w-full max-w-sm">
+        {/* Logo */}
+        <div className="mb-8 text-center">
+          <div className="inline-grid h-12 w-12 place-items-center rounded-xl bg-brand text-base font-bold text-brand-900 mb-3">
+            BL
+          </div>
+          <h1 className="text-2xl font-bold text-ink">Crear cuenta</h1>
+          <p className="mt-1 text-sm text-muted">Registro gratuito, sin tarjeta</p>
+        </div>
 
-          <form className="mt-5 space-y-3" onSubmit={handleSubmit} noValidate>
-            <div className="relative">
+        <div className="rounded-[10px] border border-border bg-surface p-6">
+          <form className="space-y-4" onSubmit={handleSubmit} noValidate>
+            <div>
+              <label htmlFor="name" className="block text-sm font-medium text-ink mb-1.5">
+                Nombre completo
+              </label>
               <input
-                id="register-name"
-                className="peer w-full rounded-xl border border-slate-200 px-3 pb-2.5 pt-5 outline-none ring-blue-100 transition placeholder:opacity-0 focus:border-blue-500 focus:ring-2 focus:placeholder:opacity-100"
+                id="name"
                 name="name"
-                placeholder="Ej: Juan Perez"
+                placeholder="Juan Pérez"
                 value={formData.name}
                 onChange={handleChange}
                 autoComplete="name"
                 required
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-faint outline-none transition focus:border-brand focus:ring-2 focus:ring-brand-100"
               />
-              <label
-                htmlFor="register-name"
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 bg-white px-1 text-sm text-slate-500 transition-all peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-blue-700 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-xs"
-              >
-                Nombre completo
-              </label>
             </div>
 
-            <div className="relative">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-ink mb-1.5">
+                Correo electrónico
+              </label>
               <input
-                id="register-email"
-                className="peer w-full rounded-xl border border-slate-200 px-3 pb-2.5 pt-5 outline-none ring-blue-100 transition placeholder:opacity-0 focus:border-blue-500 focus:ring-2 focus:placeholder:opacity-100"
+                id="email"
                 name="email"
                 type="email"
-                placeholder="Ej: usuario@correo.com"
+                placeholder="tu@correo.com"
                 value={formData.email}
                 onChange={handleChange}
                 autoComplete="email"
@@ -112,57 +104,50 @@ export default function RegisterPage() {
                 autoCorrect="off"
                 spellCheck={false}
                 required
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-faint outline-none transition focus:border-brand focus:ring-2 focus:ring-brand-100"
               />
-              <label
-                htmlFor="register-email"
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 bg-white px-1 text-sm text-slate-500 transition-all peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-blue-700 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-xs"
-              >
-                Correo electronico
-              </label>
             </div>
 
-            <div className="relative">
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-ink mb-1.5">
+                Contraseña
+              </label>
               <input
-                id="register-password"
-                className="peer w-full rounded-xl border border-slate-200 px-3 pb-2.5 pt-5 outline-none ring-blue-100 transition placeholder:opacity-0 focus:border-blue-500 focus:ring-2 focus:placeholder:opacity-100"
+                id="password"
                 name="password"
                 type="password"
-                placeholder="Ej: 8-20 caracteres con letras y numeros"
+                placeholder="Mínimo 8 caracteres"
                 value={formData.password}
                 onChange={handleChange}
                 autoComplete="new-password"
-                autoCapitalize="none"
-                autoCorrect="off"
-                spellCheck={false}
                 required
+                className="w-full rounded-lg border border-border bg-surface px-3 py-2.5 text-sm text-ink placeholder:text-faint outline-none transition focus:border-brand focus:ring-2 focus:ring-brand-100"
               />
-              <label
-                htmlFor="register-password"
-                className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 bg-white px-1 text-sm text-slate-500 transition-all peer-focus:top-0 peer-focus:-translate-y-1/2 peer-focus:text-xs peer-focus:text-blue-700 peer-[:not(:placeholder-shown)]:top-0 peer-[:not(:placeholder-shown)]:-translate-y-1/2 peer-[:not(:placeholder-shown)]:text-xs"
-              >
-                Contraseña
-              </label>
+              <p className="mt-1 text-xs text-muted">Al menos 8 caracteres con letras y números.</p>
             </div>
-            <p className="text-xs text-slate-500">Debe tener 8-20 caracteres, letras y numeros (sin caracteres especiales).</p>
 
-            {error && <div className="rounded-xl bg-rose-50 px-3 py-2 text-sm text-rose-700">{error}</div>}
+            {error && (
+              <div className="rounded-lg border border-danger-100 bg-danger-50 px-3 py-2.5 text-sm text-danger">
+                {error}
+              </div>
+            )}
 
             <button
-              className="w-full rounded-xl bg-blue-600 px-4 py-2.5 font-medium text-white transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-70"
               type="submit"
               disabled={loading}
+              className="w-full rounded-lg bg-brand px-4 py-2.5 text-sm font-semibold text-brand-900 transition hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {loading ? "Creando cuenta..." : "Crear cuenta"}
             </button>
           </form>
-
-          <p className="mt-4 text-center text-sm text-slate-600">
-            Ya tienes cuenta?{" "}
-            <Link className="font-semibold text-blue-700 hover:text-blue-800" href="/login">
-              Iniciar sesion
-            </Link>
-          </p>
         </div>
+
+        <p className="mt-5 text-center text-sm text-muted">
+          ¿Ya tienes cuenta?{" "}
+          <Link href="/login" className="font-semibold text-brand-700 hover:text-brand-900">
+            Iniciar sesión
+          </Link>
+        </p>
       </div>
     </main>
   );
